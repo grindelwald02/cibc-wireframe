@@ -79,11 +79,22 @@
         }
 
         .back-btn {
-            background: none;
+            background: rgba(255, 255, 255, 0.25);
             border: none;
             color: white;
             cursor: pointer;
             font-size: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
 
         /* SCREENS */
@@ -326,11 +337,8 @@
             border-radius: 50%;
             border: 8px solid #eee;
             border-top: 8px solid var(--cibc-red);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
@@ -402,10 +410,11 @@
             </div>
 
             <div class="content-container">
-                <p class="label" style="margin-bottom:10px;">AI-GENERATED SCENARIOS</p>
+                <p class="label" style="margin-bottom:10px;">AI-GENERATED SCENARIOS (Select One)</p>
                 <div class="scenario-scroll">
                     <!-- Buying Now -->
-                    <div class="scenario-card">
+                    <div class="scenario-card" onclick="selectScenario(this)" data-months="36" data-gap="35000"
+                        data-type="buy">
                         <h3>Buy Today</h3>
                         <div class="label">Monthly Cost</div>
                         <div class="val">$4,100</div>
@@ -424,7 +433,8 @@
                     </div>
 
                     <!-- 12 Months (Selected) -->
-                    <div class="scenario-card selected">
+                    <div class="scenario-card selected" onclick="selectScenario(this)" data-months="18" data-gap="15000"
+                        data-type="wait">
                         <div class="badge exploring" style="position:absolute; top:10px; right:10px; font-size:10px;">
                             Recommended</div>
                         <h3>Wait 18 Months</h3>
@@ -445,7 +455,8 @@
                     </div>
 
                     <!-- Renting -->
-                    <div class="scenario-card">
+                    <div class="scenario-card" onclick="selectScenario(this)" data-months="0" data-gap="0"
+                        data-type="rent">
                         <h3>Rent</h3>
                         <div class="label">Monthly Cost</div>
                         <div class="val">$2,600</div>
@@ -465,8 +476,11 @@
                 </div>
 
                 <div class="ai-insight">
-                    💡 <strong>AI Insight:</strong> Based on your profile, buying today stretches your ratio >45%.
-                    Waiting 18 months allows you to max out FHSA benefits.
+                    💡 <strong>AI Insight:</strong> Buying now puts your debt payments in the 'Risk Zone' (>45% of
+                    income). <br>
+                    <span style="display:block; margin-top:4px;">Waiting 18 months lets you build a tax-free down
+                        payment. <span style="cursor:pointer; color:#1976D2; font-style:normal;">&#9432; Learn
+                            More</span></span>
                 </div>
 
                 <button class="cta-btn" onclick="goToScreen(3)">Build my readiness plan</button>
@@ -484,24 +498,52 @@
                 <div style="height: 10px;"></div>
             </div>
 
-            <div class="content-container">
+            <div class="content-container animate-fade">
                 <div class="card" style="text-align:center;">
                     <h3>Time to Readiness</h3>
                     <div class="readiness-ring-container">
-                        <div class="ring-circle">
-                            <span style="font-size:24px; font-weight:700;">~18</span>
-                            <span style="font-size:12px; color:#666;">Months</span>
+                        <!-- SVG Ring for Animation -->
+                        <div style="position:relative; width:140px; height:140px; margin:0 auto;">
+                            <svg width="140" height="140" viewBox="0 0 140 140" style="transform: rotate(-90deg);">
+                                <circle cx="70" cy="70" r="54" fill="none" stroke="#eee" stroke-width="12" />
+                                <circle id="readiness-ring" cx="70" cy="70" r="54" fill="none" stroke="#A50021"
+                                    stroke-width="12" stroke-dasharray="339.29" stroke-dashoffset="339.29"
+                                    stroke-linecap="round" />
+                            </svg>
+                            <div
+                                style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
+                                <span id="months-val"
+                                    style="font-size:28px; font-weight:700; display:block; line-height:1;">18</span>
+                                <span style="font-size:12px; color:#666;">Months</span>
+                            </div>
                         </div>
                     </div>
-                    <p>Current Gap: <strong>-$15,000</strong></p>
+                    <p>Current Gap: <strong id="gap-val">-$15,000</strong></p>
                 </div>
 
-                <p class="label" style="margin-top:20px; margin-bottom:10px;">RECOMMENDED ACTIONS (AI)</p>
+                <!-- SIMULATOR -->
+                <div class="simulator-box">
+                    <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:500;">
+                        <span>Adjust Monthly Savings</span>
+                        <span id="savings-val" style="color:var(--cibc-red)">+$0/mo</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" min="0" max="1000" step="50" value="200"
+                            oninput="updateSimulator(this.value)">
+                    </div>
+                    <p style="font-size:11px; color:#888; margin-top:8px;">See how saving more accelerates your
+                        timeline.</p>
+                </div>
+
+                <p class="label" style="margin-bottom:10px;">RECOMMENDED ACTIONS (AI)</p>
 
                 <!-- FHSA Card -->
                 <div class="product-card fhsa">
                     <div class="product-details">
-                        <div class="product-title">Open FHSA Account</div>
+                        <div class="product-title">
+                            Enable Auto-Contribution (FHSA)
+                            <span style="color:#999; cursor:pointer;" title="Learn about FHSA">&#9432;</span>
+                        </div>
                         <p style="font-size:12px; margin:0;">Save $8k/year tax-free.</p>
                         <div class="product-impact">+ Reduces taxes & gap</div>
                     </div>
@@ -512,7 +554,10 @@
                 <!-- Savings Card -->
                 <div class="product-card rrsp">
                     <div class="product-details">
-                        <div class="product-title">Optimize Surplus Cash</div>
+                        <div class="product-title">
+                            Unlock HBP Capacity
+                            <span style="color:#999; cursor:pointer;" title="Learn about HBP">&#9432;</span>
+                        </div>
                         <p style="font-size:12px; margin:0;">Move $500/mo to HISA.</p>
                         <div class="product-impact">+ Earn ~4% interest</div>
                     </div>
@@ -526,11 +571,11 @@
 
         <!-- SCREEN 4: ADVISOR HANDOFF -->
         <div id="screen-4" class="screen">
-            <div class="app-header">
+            <div class="app-header" style="background-color:var(--cibc-dark);">
                 <div class="app-header-top">
-                    <!-- No back button, simulates future state -->
-                    <div style="width:24px"></div>
-                    <div class="header-title">Future State</div>
+                    <!-- Added Back Button -->
+                    <button class="back-btn" onclick="goToScreen(3)">&#8592;</button>
+                    <div class="header-title">Advisor Checkpoint</div>
                     <div style="width:24px"></div>
                 </div>
                 <div style="height: 10px;"></div>
@@ -539,19 +584,19 @@
             <div class="content-container">
                 <div class="card" style="border-top: 4px solid var(--success);">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <h2>You are Ready</h2>
-                        <span class="badge ready">Close to Ready</span>
+                        <h2 id="final-title">You are Ready</h2>
+                        <span id="final-badge" class="badge ready">Close to Ready</span>
                     </div>
                     <p>Great job! You've closed the gap.</p>
 
                     <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin:10px 0;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                             <span style="font-size:14px;">Down Payment</span>
-                            <span style="font-weight:bold; color:var(--success);">100% Ready</span>
+                            <span id="final-downpmt" style="font-weight:bold; color:var(--success);">100% Ready</span>
                         </div>
                         <div style="display:flex; justify-content:space-between;">
                             <span style="font-size:14px;">Confidence</span>
-                            <span style="font-weight:bold; color:var(--success);">92%</span>
+                            <span id="final-conf" style="font-weight:bold; color:var(--success);">92%</span>
                         </div>
                     </div>
 
@@ -564,9 +609,10 @@
                 <div class="card">
                     <h3>Next Steps</h3>
                     <button class="cta-btn">Schedule Advisor Review</button>
-                    <button class="cta-btn cta-secondary">Pre-plan Mortgage</button>
-                    <p style="text-align:center; font-size:11px; color:#888; margin-top:10px;">No instant credit hit.
-                        Risk-governed process.</p>
+                    <button class="cta-btn cta-secondary" onclick="goToScreen(5)">Verify Purchasing Power</button>
+                    <p style="text-align:center; font-size:11px; color:#888; margin-top:10px;">
+                        Soft credit check only. No impact to score.
+                    </p>
                 </div>
 
                 <!-- Reset for demo -->
@@ -577,10 +623,94 @@
             </div>
         </div>
 
+        <!-- SCREEN 5: MORTGAGE PRE-CHECK (New) -->
+        <div id="screen-5" class="screen">
+            <div class="app-header" style="background-color:var(--cibc-dark);">
+                <div class="app-header-top">
+                    <button class="back-btn" onclick="goToScreen(4)">&#8592;</button>
+                    <div class="header-title">Mortgage Check</div>
+                    <div style="width:24px"></div>
+                </div>
+                <div style="height:10px;"></div>
+            </div>
+
+            <div class="content-container">
+                <div class="card">
+                    <h3 style="margin-bottom:20px;">Preliminary Approval</h3>
+
+                    <!-- Check Items -->
+                    <div style="display:flex; align-items:center; margin-bottom:15px;">
+                        <div
+                            style="background:#E8F5E9; color:#2e7d32; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:12px;">
+                            &#10003;</div>
+                        <div>
+                            <div style="font-weight:bold;">Credit Health</div>
+                            <div style="font-size:12px; color:#666;">Soft Check Passed (Est. 760+)</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; margin-bottom:15px;">
+                        <div
+                            style="background:#E8F5E9; color:#2e7d32; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:12px;">
+                            &#10003;</div>
+                        <div>
+                            <div style="font-weight:bold;">TDS/GDS Ratio</div>
+                            <div style="font-size:12px; color:#666;">Within limit (39.5%)</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; margin-bottom:15px;">
+                        <div
+                            style="background:#FFF3E0; color:#ef6c00; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:12px;">
+                            !</div>
+                        <div>
+                            <div style="font-weight:bold;">Down Payment</div>
+                            <div style="font-size:12px; color:#666;">Verification pending (Advisor)</div>
+                        </div>
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Max Affordability</span>
+                        <span style="font-size:20px; font-weight:bold;">$680,000</span>
+                    </div>
+                </div>
+
+                <div class="card" style="background: linear-gradient(135deg, #A50021 0%, #7e0018 100%); color:white;">
+                    <div style="font-size:12px; opacity:0.9; margin-bottom:5px;">EXCLUSIVE OFFER</div>
+                    <h3 style="color:white; margin:0 0 10px 0;">SmartPlanner Rate Lock</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:end;">
+                        <div>
+                            <div style="font-size:28px; font-weight:bold;">4.29%</div>
+                            <div style="font-size:12px;">3-Year Fixed Insured</div>
+                        </div>
+                        <div
+                            style="font-size:12px; background:rgba(255,255,255,0.2); padding:4px 8px; border-radius:4px;">
+                            Hold for 120 Days
+                        </div>
+                    </div>
+                </div>
+
+                <button class="cta-btn">Submit to Advisor</button>
+                <button style="width:100%; border:none; background:none; padding:15px; color:#999; cursor:pointer;"
+                    onclick="goToScreen(1)">Back to Start</button>
+            </div>
+        </div>
+
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // Global State for the "Engine"
+        let appState = {
+            baseMonths: 18,
+            baseGap: 15000,
+            monthsRemovedBySavings: 2, // Default $200 = 2 months
+            savingsAmount: 200,
+            scenarioType: 'wait'
+        };
+
         function goToScreen(screenNum) {
             // Hide all active
             document.querySelectorAll('.screen').forEach(s => {
@@ -591,30 +721,243 @@
             const next = document.getElementById('screen-' + screenNum);
             next.classList.add('active');
 
-            // Optional: simulate stack effect by adding 'previous' class to others
-            // (Simple version: just simple clear switch)
+            // Trigger Animation and Reset if Screen 3
+            if (screenNum === 3) {
+                // Reset to default for demo purposes if coming back?
+                // Or just render current state.
+                setTimeout(() => {
+                    renderState();
+                }, 100);
+            }
+        }
+
+        function selectScenario(card) {
+            // Remove selected class from all
+            document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('selected'));
+            // Add to clicked
+            card.classList.add('selected');
+
+            // Logic: Update App State based on selection
+            const months = parseInt(card.getAttribute('data-months'));
+            const gap = parseInt(card.getAttribute('data-gap'));
+            const type = card.getAttribute('data-type');
+
+            appState.baseMonths = months;
+            appState.baseGap = gap;
+            appState.scenarioType = type;
+
+            // Render (invisible update until they go to next screen, or immediate?)
+            renderState();
+        }
+
+        // Central render function to keep UI in sync
+        // Central render function to keep UI in sync
+        function renderState() {
+            const monthsDisplay = document.getElementById('months-val');
+            const gapDisplay = document.getElementById('gap-val');
+            const savingsDisplay = document.getElementById('savings-val');
+            const ring = document.getElementById('readiness-ring');
+            const titleDisplay = document.querySelector('#screen-3 h3');
+            const subtextDisplay = monthsDisplay.nextElementSibling; // "Months" span
+
+            // CHECK RENT STATE
+            if (appState.scenarioType === 'rent') {
+                titleDisplay.innerText = "Rent + Invest Strategy";
+
+                // Logic: 3 Years of Missed Equity (~$45k) vs 3 Years of Savings
+                // Showing that renting is only valid if you save agresively.
+                let missedEquity = 45000;
+
+                // ADD PRODUCT WEALTH (from gap reduction)
+                let productWealth = 0;
+                if (appState.baseGap < 0) productWealth = Math.abs(appState.baseGap);
+
+                let investmentValue = (appState.savingsAmount * 36) + productWealth;
+                let netGap = missedEquity - investmentValue;
+
+                // Display Projected Cash
+                // Convert to k if large?
+                let displayVal = (investmentValue / 1000).toFixed(1) + "k";
+
+                monthsDisplay.innerText = "$" + displayVal;
+                monthsDisplay.style.fontSize = "28px";
+                if (subtextDisplay) subtextDisplay.innerText = "Liquid Wealth";
+
+                // Show Net Gap
+                let gapColor = netGap > 0 ? "#d32f2f" : "#2e7d32"; // Red if gap positive (bad), Green if covered
+                let gapSign = netGap > 0 ? "-$" : "+$";
+                let gapText = Math.abs(netGap).toLocaleString();
+
+                gapDisplay.innerHTML = "<span style='font-size:14px; color:#666;'>Vs Home Equity: </span><span style='color:" + gapColor + "'>" + gapSign + gapText + "</span>";
+
+                // Ring tracks Investment vs Equity Target
+                let pct = investmentValue / 45000;
+                if (pct > 1) pct = 1;
+                // Full circle empty = 339. full = 0.
+                let offset = 339 - (339 * pct);
+
+                if (ring) {
+                    ring.style.stroke = netGap <= 0 ? "#2e7d32" : "#A50021"; // Green ring if winning
+                    ring.style.transition = 'stroke-dashoffset 0.8s ease-out, stroke 0.3s';
+                    ring.style.strokeDashoffset = offset;
+                }
+
+                if (savingsDisplay) {
+                    savingsDisplay.innerText = "+$" + appState.savingsAmount + "/mo";
+                }
+                return; // Stop here for rent
+            }
+
+            // RESET STANDARD STYLES (in case coming from rent)
+            if (ring) ring.style.stroke = "#A50021";
+
+            // STANDARD STATE
+            titleDisplay.innerText = "Time to Readiness";
+            monthsDisplay.style.fontSize = "28px";
+            if (subtextDisplay) subtextDisplay.innerText = "Months";
+
+            // Calculate Finals
+            // Logic: Base Months - Impact from Savings
+            let finalMonths = appState.baseMonths - appState.monthsRemovedBySavings;
+            if (finalMonths < 0) finalMonths = 0;
+
+            // Logic: Base Gap - (Savings * 12)
+            // Note: This matches the "Gap" logic.
+            let finalGap = appState.baseGap - (appState.savingsAmount * 12);
+            if (finalGap < 0) finalGap = 0;
+
+            // Update Text
+            monthsDisplay.innerText = finalMonths;
+            gapDisplay.innerHTML = "-$" + finalGap.toLocaleString(); // innerHTML for consistency
+            if (savingsDisplay) {
+                savingsDisplay.innerText = "+$" + appState.savingsAmount + "/mo";
+            }
+
+            // Update Ring Animation
+            // Full circle = 339.29 (empty). 0 = Full.
+            // 200 offset was ~18 months.
+            // Let's make it proportional. 18 months = 200. 0 months = 0.
+            // approx 11 offset per month.
+            let newOffset = finalMonths * 11;
+            if (newOffset > 339) newOffset = 339;
+
+            if (ring) {
+                ring.style.transition = 'stroke-dashoffset 0.8s ease-out';
+                ring.style.strokeDashoffset = newOffset;
+            }
+        }
+
+        function updateSimulator(extraSavings) {
+            // Logic: Every $100 reduces time by ~1 month.
+            appState.savingsAmount = extraSavings;
+            appState.monthsRemovedBySavings = Math.floor(extraSavings / 100);
+            renderState();
         }
 
         function toggleCheck(btn) {
-            if (btn.innerText === "Activate" || btn.innerText === "Review") {
-                btn.innerText = "Add Pending...";
+            const isFHSA = btn.closest('.product-card').classList.contains('fhsa');
+            const isAdded = btn.classList.contains('active-state');
+
+            if (isAdded) {
+                // REVERT STATE (Undo)
+                btn.classList.remove('active-state');
+                btn.style.backgroundColor = "transparent";
+                btn.style.color = "var(--cibc-red)";
+                btn.style.border = "1px solid var(--cibc-red)";
+
+                if (isFHSA) {
+                    btn.innerText = "Activate";
+                    appState.baseMonths += 2;
+                    appState.baseGap += 2000;
+                } else {
+                    btn.innerText = "Review";
+                    appState.baseMonths += 1; // Revert the 1 month benefit
+                    appState.baseGap += 1000;
+                }
+                renderState();
+
+            } else {
+                // APPLY STATE (Add)
+                btn.innerText = "Adding...";
                 btn.style.opacity = "0.7";
+
                 setTimeout(() => {
+                    btn.classList.add('active-state');
                     btn.innerText = "✓ Added";
                     btn.style.backgroundColor = "var(--success)";
                     btn.style.color = "white";
                     btn.style.border = "none";
                     btn.style.opacity = "1";
-                }, 800);
+
+                    if (isFHSA) {
+                        // Impact: -2 months, -2k gap
+                        appState.baseMonths -= 2;
+                        appState.baseGap -= 2000;
+                    } else {
+                        // Impact (Surplus): -1 month (interest/optimizing), -1k gap
+                        appState.baseMonths -= 1;
+                        appState.baseGap -= 1000;
+                    }
+                    renderState();
+                }, 500); // Faster feedback
             }
         }
 
         function startTracking() {
             const btn = document.querySelector('#screen-3 .cta-btn');
+            const originalText = btn.innerText;
             btn.innerText = "Saving Preferences...";
+
+            // Logic: Determine final state before showing screen
+            updateFinalScreen();
+
             setTimeout(() => {
                 goToScreen(4); // Jump to "Future State"
-            }, 1500);
+                btn.innerText = originalText;
+            }, 1000);
+        }
+
+        function updateFinalScreen() {
+            // Re-calc final gap
+            let savingsImpact = (appState.savingsAmount * 12);
+            let finalGap = appState.baseGap - savingsImpact;
+            if (finalGap < 0) finalGap = 0;
+
+            // Dynamic Confidence Score Calculation
+            // Base: 60%. Max upside from savings: 32%.
+            let coverageRatio = savingsImpact / appState.baseGap;
+            if (coverageRatio > 1) coverageRatio = 1;
+            if (appState.baseGap === 0) coverageRatio = 1; // Rent case or valid state
+
+            let dynamicScore = 60 + Math.round(coverageRatio * 32);
+
+            const screen4Title = document.getElementById('final-title');
+            const screen4Badge = document.getElementById('final-badge');
+            const screen4DownPmt = document.getElementById('final-downpmt');
+            const screen4Conf = document.getElementById('final-conf');
+
+            if (finalGap <= 0) {
+                // READY CASE (Success)
+                screen4Title.innerText = "You are Ready";
+                screen4Badge.innerText = "Close to Ready";
+                screen4Badge.className = "badge ready";
+                screen4DownPmt.innerText = "100% Ready";
+                screen4DownPmt.style.color = "var(--success)";
+                screen4Conf.innerText = "92%";
+                screen4Conf.style.color = "var(--success)";
+            } else {
+                // BUILDING CASE (Gap remains)
+                screen4Title.innerText = "Plan in Motion";
+                screen4Badge.innerText = "Building Momentum";
+                screen4Badge.className = "badge exploring"; // Blue/Grey
+
+                screen4DownPmt.innerText = "Gap: $" + finalGap.toLocaleString();
+                screen4DownPmt.style.color = "var(--warning)";
+
+                // Dynamic low confidence
+                screen4Conf.innerText = dynamicScore + "% (Improving)";
+                screen4Conf.style.color = "var(--warning)";
+            }
         }
     </script>
 </body>
