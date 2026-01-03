@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CIBC Home Readiness Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cibc-red: #A50021;
+            --cibc-dark: #2d2d2d;
+            --bg-grey: #F4F6F9;
+            --white: #ffffff;
+            --border: #e0e0e0;
+            --success: #2e7d32;
+            --warning: #ed6c02;
+            --danger: #d32f2f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .phone-mockup {
+            width: 100%;
+            max-width: 390px;
+            height: 100vh;
+            max-height: 844px;
+            /* iPhone size */
+            background-color: var(--bg-grey);
+            position: relative;
+            overflow: hidden;
+            border-radius: 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (min-width: 400px) {
+            .phone-mockup {
+                height: 80vh;
+                border-radius: 30px;
+                border: 8px solid #111;
+            }
+        }
+
+        /* HEADER */
+        .app-header {
+            background-color: var(--cibc-red);
+            color: white;
+            padding: 20px 20px 40px;
+            /* Extra bottom padding for overlap */
+            position: relative;
+            z-index: 10;
+        }
+
+        .app-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* SCREENS */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-grey);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 5;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            transform: translateX(0);
+            z-index: 10;
+        }
+
+        .screen.previous {
+            transform: translateX(-20%);
+            z-index: 8;
+        }
+
+        /* CONTENT CONTAINERS */
+        .content-container {
+            flex-grow: 1;
+            padding: 0 20px 20px;
+            margin-top: -25px;
+            /* Pull up over header */
+            position: relative;
+            z-index: 20;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .badge.exploring {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .badge.ready {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        /* TYPOGRAPHY */
+        h2 {
+            font-size: 20px;
+            color: var(--cibc-dark);
+            margin-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 16px;
+            color: var(--cibc-dark);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .val {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* SCENARIO CARDS */
+        .scenario-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 10px;
+            margin: 0 -16px;
+            /* Bleed to edge */
+            padding: 0 16px 10px 16px;
+            /* Inner padding */
+        }
+
+        .scenario-card {
+            min-width: 240px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+
+        .scenario-card.selected {
+            border: 2px solid var(--cibc-red);
+        }
+
+        .confidence-bar {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .fill-red {
+            background: var(--danger);
+            width: 40%;
+        }
+
+        .fill-amber {
+            background: var(--warning);
+            width: 65%;
+        }
+
+        .fill-green {
+            background: var(--success);
+            width: 85%;
+        }
+
+        /* PRODUCT CARDS */
+        .product-card {
+            display: flex;
+            align-items: center;
+            border-left: 4px solid var(--border);
+            padding: 12px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .product-card.fhsa {
+            border-left-color: var(--cibc-red);
+        }
+
+        .product-card.rrsp {
+            border-left-color: #1976D2;
+        }
+
+        .product-details {
+            flex-grow: 1;
+            padding-left: 10px;
+        }
+
+        .product-title {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .product-impact {
+            font-size: 12px;
+            color: var(--success);
+        }
+
+        /* CTA BUTTONS */
+        .cta-btn {
+            background-color: var(--cibc-red);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(165, 0, 33, 0.3);
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            transition: transform 0.1s;
+        }
+
+        .cta-btn:active {
+            transform: scale(0.98);
+        }
+
+        .cta-secondary {
+            background-color: transparent;
+            color: var(--cibc-red);
+            border: 1px solid var(--cibc-red);
+            box-shadow: none;
+            margin-top: 10px;
+        }
+
+        /* AI INSIGHT BOX */
+        .ai-insight {
+            background: #FFF3E0;
+            border-left: 4px solid var(--warning);
+            padding: 10px;
+            font-size: 13px;
+            color: #5d4037;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* PROGRESS RING (Readiness) */
+        .readiness-ring-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .ring-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 8px solid #eee;
+            border-top: 8px solid var(--cibc-red);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone-mockup">
+
+        <!-- SCREEN 1: ENTRY / HUB -->
+        <div id="screen-1" class="screen active">
+            <div class="app-header">
+                <div class="app-header-top">
+                    <button class="back-btn">&#8592;</button>
+                    <div class="header-title">SmartPlanner</div>
+                    <div style="width:24px"></div>
+                </div>
+                <!-- Space for content pull-up -->
+                <div style="height: 10px;"></div>
+            </div>
+
+            <div class="content-container">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h2>Home Readiness</h2>
+                        <span class="badge exploring">Exploring</span>
+                    </div>
+                    <p>Your personalized path to home ownership.</p>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                        <div>
+                            <div class="label">Monthly Income</div>
+                            <div class="val">$7,083</div>
+                        </div>
+                        <div>
+                            <div class="label">Savings</div>
+                            <div class="val">$22,000</div>
+                        </div>
+                        <div>
+                            <div class="label">FHSA</div>
+                            <div class="val">$0</div>
+                        </div>
+                        <div>
+                            <div class="label">Affordability</div>
+                            <div class="val">~$2,800/mo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Explore Your Options</h3>
+                    <p>See how your finances stack up against real market scenarios for Toronto.</p>
+                    <button class="cta-btn" onclick="goToScreen(2)">Explore buy vs rent scenarios</button>
+                    <!-- Small subtle credit -->
+                    <div style="text-align:center; font-size:10px; color:#ccc; margin-top:10px;">Concept by Angad Singh
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: SCENARIOS -->
+        <div id="screen-2" class="screen">
+            <div class="app-header">
+                <div class="app-header-top">
+                    <button class="back-btn" onclick="goToScreen(1)">&#8592;</button>
+                    <div class="header-title">Scenario Explorer</div>
+                    <div style="width:24px"></div>
+                </div>
+                <div style="height: 10px;"></div>
+            </div>
+
+            <div class="content-container">
+                <p class="label" style="margin-bottom:10px;">AI-GENERATED SCENARIOS</p>
+                <div class="scenario-scroll">
+                    <!-- Buying Now -->
+                    <div class="scenario-card">
+                        <h3>Buy Today</h3>
+                        <div class="label">Monthly Cost</div>
+                        <div class="val">$4,100</div>
+                        <div class="label" style="margin-top:8px;">Down Payment Needed</div>
+                        <div class="val" style="color:var(--danger)">$35,000 Gap</div>
+
+                        <div style="margin-top:10px;">
+                            <div style="display:flex; justify-content:space-between; font-size:12px;">
+                                <span>Confidence</span>
+                                <span>40%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill fill-red"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 12 Months (Selected) -->
+                    <div class="scenario-card selected">
+                        <div class="badge exploring" style="position:absolute; top:10px; right:10px; font-size:10px;">
+                            Recommended</div>
+                        <h3>Wait 18 Months</h3>
+                        <div class="label">Monthly Cost</div>
+                        <div class="val">$3,800</div>
+                        <div class="label" style="margin-top:8px;">Down Payment</div>
+                        <div class="val" style="color:var(--success)">On Track</div>
+
+                        <div style="margin-top:10px;">
+                            <div style="display:flex; justify-content:space-between; font-size:12px;">
+                                <span>Confidence</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill fill-amber"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Renting -->
+                    <div class="scenario-card">
+                        <h3>Rent</h3>
+                        <div class="label">Monthly Cost</div>
+                        <div class="val">$2,600</div>
+                        <div class="label" style="margin-top:8px;">Equity Built</div>
+                        <div class="val">$0</div>
+
+                        <div style="margin-top:10px;">
+                            <div style="display:flex; justify-content:space-between; font-size:12px;">
+                                <span>Confidence</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill fill-green"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-insight">
+                    💡 <strong>AI Insight:</strong> Based on your profile, buying today stretches your ratio >45%.
+                    Waiting 18 months allows you to max out FHSA benefits.
+                </div>
+
+                <button class="cta-btn" onclick="goToScreen(3)">Build my readiness plan</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: READINESS PLAN -->
+        <div id="screen-3" class="screen">
+            <div class="app-header">
+                <div class="app-header-top">
+                    <button class="back-btn" onclick="goToScreen(2)">&#8592;</button>
+                    <div class="header-title">Readiness Engine</div>
+                    <div style="width:24px"></div>
+                </div>
+                <div style="height: 10px;"></div>
+            </div>
+
+            <div class="content-container">
+                <div class="card" style="text-align:center;">
+                    <h3>Time to Readiness</h3>
+                    <div class="readiness-ring-container">
+                        <div class="ring-circle">
+                            <span style="font-size:24px; font-weight:700;">~18</span>
+                            <span style="font-size:12px; color:#666;">Months</span>
+                        </div>
+                    </div>
+                    <p>Current Gap: <strong>-$15,000</strong></p>
+                </div>
+
+                <p class="label" style="margin-top:20px; margin-bottom:10px;">RECOMMENDED ACTIONS (AI)</p>
+
+                <!-- FHSA Card -->
+                <div class="product-card fhsa">
+                    <div class="product-details">
+                        <div class="product-title">Open FHSA Account</div>
+                        <p style="font-size:12px; margin:0;">Save $8k/year tax-free.</p>
+                        <div class="product-impact">+ Reduces taxes & gap</div>
+                    </div>
+                    <button class="cta-secondary" style="width:auto; margin:0; padding:6px 12px; font-size:12px;"
+                        onclick="toggleCheck(this)">Activate</button>
+                </div>
+
+                <!-- Savings Card -->
+                <div class="product-card rrsp">
+                    <div class="product-details">
+                        <div class="product-title">Optimize Surplus Cash</div>
+                        <p style="font-size:12px; margin:0;">Move $500/mo to HISA.</p>
+                        <div class="product-impact">+ Earn ~4% interest</div>
+                    </div>
+                    <button class="cta-secondary" style="width:auto; margin:0; padding:6px 12px; font-size:12px;"
+                        onclick="toggleCheck(this)">Review</button>
+                </div>
+
+                <button class="cta-btn" onclick="startTracking()">Start Tracking Progress</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: ADVISOR HANDOFF -->
+        <div id="screen-4" class="screen">
+            <div class="app-header">
+                <div class="app-header-top">
+                    <!-- No back button, simulates future state -->
+                    <div style="width:24px"></div>
+                    <div class="header-title">Future State</div>
+                    <div style="width:24px"></div>
+                </div>
+                <div style="height: 10px;"></div>
+            </div>
+
+            <div class="content-container">
+                <div class="card" style="border-top: 4px solid var(--success);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h2>You are Ready</h2>
+                        <span class="badge ready">Close to Ready</span>
+                    </div>
+                    <p>Great job! You've closed the gap.</p>
+
+                    <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin:10px 0;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <span style="font-size:14px;">Down Payment</span>
+                            <span style="font-weight:bold; color:var(--success);">100% Ready</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="font-size:14px;">Confidence</span>
+                            <span style="font-weight:bold; color:var(--success);">92%</span>
+                        </div>
+                    </div>
+
+                    <div class="ai-insight" style="background:#E8F5E9; border-color:var(--success); color:#1b5e20;">
+                        <strong>Advisor Check:</strong> Your profile is solid. An advisor can now validate your
+                        affordability for a pre-approval.
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Next Steps</h3>
+                    <button class="cta-btn">Schedule Advisor Review</button>
+                    <button class="cta-btn cta-secondary">Pre-plan Mortgage</button>
+                    <p style="text-align:center; font-size:11px; color:#888; margin-top:10px;">No instant credit hit.
+                        Risk-governed process.</p>
+                </div>
+
+                <!-- Reset for demo -->
+                <div style="text-align:center; margin-top:30px;">
+                    <button style="border:none; background:none; text-decoration:underline; color:#999; cursor:pointer;"
+                        onclick="goToScreen(1)">Restart Demo</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        function goToScreen(screenNum) {
+            // Hide all active
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+            });
+
+            // Show new
+            const next = document.getElementById('screen-' + screenNum);
+            next.classList.add('active');
+
+            // Optional: simulate stack effect by adding 'previous' class to others
+            // (Simple version: just simple clear switch)
+        }
+
+        function toggleCheck(btn) {
+            if (btn.innerText === "Activate" || btn.innerText === "Review") {
+                btn.innerText = "Add Pending...";
+                btn.style.opacity = "0.7";
+                setTimeout(() => {
+                    btn.innerText = "✓ Added";
+                    btn.style.backgroundColor = "var(--success)";
+                    btn.style.color = "white";
+                    btn.style.border = "none";
+                    btn.style.opacity = "1";
+                }, 800);
+            }
+        }
+
+        function startTracking() {
+            const btn = document.querySelector('#screen-3 .cta-btn');
+            btn.innerText = "Saving Preferences...";
+            setTimeout(() => {
+                goToScreen(4); // Jump to "Future State"
+            }, 1500);
+        }
+    </script>
+</body>
+
+</html>
