@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CIBC Home Readiness Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- MATH ENGINE IMPORT -->
+    <script src="math-engine.js"></script>
     <style>
         :root {
             --cibc-red: #A50021;
@@ -144,19 +145,20 @@
 
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 16px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .badge.exploring {
@@ -290,35 +292,337 @@
             color: var(--success);
         }
 
-        /* CTA BUTTONS */
+        /* PRIMARY CTA BUTTON */
+        .cta,
         .cta-btn {
-            background-color: var(--cibc-red);
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--cibc-red) 0%, #8B001C 100%);
             color: white;
             border: none;
-            padding: 14px;
             border-radius: 30px;
-            width: 100%;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(165, 0, 33, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(165, 0, 33, 0.3);
             text-align: center;
-            display: block;
-            margin-top: 20px;
-            text-decoration: none;
-            transition: transform 0.1s;
+            letter-spacing: 0.3px;
         }
 
+        .cta:hover,
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(165, 0, 33, 0.4);
+        }
+
+        .cta:active,
         .cta-btn:active {
-            transform: scale(0.98);
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(165, 0, 33, 0.3);
         }
 
+        /* SECONDARY BUTTON */
         .cta-secondary {
-            background-color: transparent;
+            width: 100%;
+            padding: 14px 24px;
+            background: white;
             color: var(--cibc-red);
-            border: 1px solid var(--cibc-red);
-            box-shadow: none;
-            margin-top: 10px;
+            border: 2px solid var(--cibc-red);
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .cta-secondary:hover {
+            background: var(--cibc-red);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(165, 0, 33, 0.2);
+        }
+
+        .cta-secondary:active {
+            transform: translateY(0);
+        }
+
+        /* BOTTOM NAVIGATION */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 20px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 12px;
+            min-width: 70px;
+        }
+
+        .nav-item.active {
+            background: #ffebee;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            transition: transform 0.2s;
+        }
+
+        .nav-item.active .nav-icon {
+            transform: scale(1.1);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--cibc-red);
+            font-weight: 700;
+        }
+
+        /* TOGGLE SWITCH (iOS Style) */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked+.slider {
+            background-color: var(--cibc-red);
+        }
+
+        /* SCREEN CONTAINER FIX */
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            background-color: #F8F9FA;
+            /* Solid background prevents bleed-through */
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            /* Ensure it sits on top of previous screens */
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+        .compact-mb {
+            margin-bottom: 8px !important;
+        }
+
+        .compact-p {
+            padding: 12px !important;
+        }
+
+        .compact-text {
+            font-size: 13px !important;
+        }
+
+        /* TOGGLE SWITCH (iOS Style) - ROBUST FIX */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+            cursor: pointer;
+            /* Ensure label cursor is pointer */
+        }
+
+        .toggle-switch input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            pointer-events: none;
+            z-index: -1;
+            /* Send to back */
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+            z-index: 1;
+        }
+
+
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked+.slider {
+            background-color: var(--cibc-red);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+
+
+        /* iOS-STYLE TOGGLE SWITCH */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 51px;
+            height: 31px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e0e0e0;
+            transition: 0.3s;
+            border-radius: 31px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 27px;
+            width: 27px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked+.toggle-slider {
+            background-color: var(--cibc-red);
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* SLIDER INPUT */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--cibc-red);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(165, 0, 33, 0.3);
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 8px rgba(165, 0, 33, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--cibc-red);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(165, 0, 33, 0.3);
         }
 
         /* AI INSIGHT BOX */
@@ -360,6 +664,42 @@
                 transform: scaleY(1);
                 transform-origin: bottom;
             }
+        }
+
+        /* RENEWAL SHOCK METER */
+        .shock-meter {
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .shock-val {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--warning);
+            width: 0%;
+            transition: width 1s;
+        }
+
+        /* INFO ICON */
+        .info-icon {
+            color: #999;
+            border: 1px solid #ccc;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            margin-left: 5px;
+            font-style: normal;
         }
     </style>
 </head>
@@ -407,7 +747,8 @@
                 <div class="card">
                     <h3>Plan Your Future</h3>
                     <p>Compare Rent vs. Wait vs. Buy Now scenarios.</p>
-                    <button class="cta-btn" onclick="goToScreen(2)">Scenario Planner</button>
+                    <button class="cta-btn" onclick="goToScreen(2)" style="display:block; margin-top:10px;">Scenario
+                        Planner</button>
                 </div>
 
                 <!-- NEW: Renewal Entry Point -->
@@ -418,9 +759,9 @@
                             <p style="color:rgba(255,255,255,0.7); font-size:12px; margin:0;">See renewal risk &
                                 options.</p>
                         </div>
-                        <button onclick="goToScreen(6)"
-                            style="background:rgba(255,255,255,0.2); color:white; border:none; padding:8px 12px; border-radius:20px; font-size:12px; cursor:pointer;">Check
-                            Now &rarr;</button>
+                        <button class="cta-secondary" onclick="goToScreen(6)"
+                            style="background:rgba(255,255,255,0.2); color:white; padding:10px 16px; margin-top:0;">Check
+                            Now →</button>
                     </div>
                 </div>
 
@@ -469,38 +810,22 @@
                     <div
                         style="display:flex; justify-content:space-between; align-items:flex-end; height:180px; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid #eee;">
 
-                        <!-- RENT BAR -->
                         <div onclick="selectScenario('rent')" class="chart-col"
                             style="width:30%; text-align:center; cursor:pointer; opacity:0.6; transition:opacity 0.2s;"
                             id="bar-rent">
                             <div
                                 style="height:140px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
                                 <div
+                                    style="font-size:10px; font-weight:bold; color:var(--cibc-dark); margin-bottom:3px;">
+                                    $172k</div>
+                                <div
                                     style="font-size:11px; font-weight:bold; color:var(--cibc-dark); margin-bottom:5px;">
-                                    $65k</div>
+                                    Max Liquidity</div>
                                 <div
-                                    style="height:40%; background:var(--warning); width:80%; border-radius:4px 4px 0 0; animation: growBar 0.8s ease-out;">
+                                    style="height:50%; background:var(--danger); width:80%; border-radius:4px 4px 0 0; animation: growBar 0.8s ease-out;">
                                 </div>
                             </div>
-                            <div style="font-size:9px; font-weight:bold; color:#555; margin-top:8px;">RENT</div>
-                        </div>
-
-                        <!-- WAIT BAR (OPTIMAL) -->
-                        <div onclick="selectScenario('wait')" class="chart-col"
-                            style="width:30%; text-align:center; cursor:pointer; opacity:1;" id="bar-wait">
-                            <!-- Best option badge -->
-                            <div
-                                style="background:var(--success); color:white; font-size:8px; padding:2px 6px; border-radius:8px; margin-bottom:4px; display:inline-block;">
-                                AI PICK</div>
-                            <div
-                                style="height:140px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
-                                <div style="font-size:11px; font-weight:bold; color:var(--success); margin-bottom:5px;">
-                                    $110k</div>
-                                <div
-                                    style="height:85%; background:var(--success); width:80%; border-radius:4px 4px 0 0; animation: growBar 0.8s ease-out 0.2s backwards;">
-                                </div>
-                            </div>
-                            <div style="font-size:9px; font-weight:bold; color:#555; margin-top:8px;">SMART WAIT</div>
+                            <div style="font-size:9px; font-weight:bold; color:#555; margin-top:8px;">RENT (5yr)</div>
                         </div>
 
                         <!-- BUY NOW BAR -->
@@ -509,38 +834,68 @@
                             <div
                                 style="height:140px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
                                 <div
-                                    style="font-size:11px; font-weight:bold; color:var(--cibc-red); margin-bottom:5px;">
-                                    $80k</div>
+                                    style="font-size:10px; font-weight:bold; color:var(--cibc-red); margin-bottom:3px;">
+                                    $179k</div>
                                 <div
-                                    style="height:60%; background:var(--danger); width:80%; border-radius:4px 4px 0 0; animation: growBar 0.8s ease-out 0.4s backwards;">
+                                    style="font-size:11px; font-weight:bold; color:var(--cibc-red); margin-bottom:5px;">
+                                    High Ratio</div>
+                                <div
+                                    style="height:70%; background:var(--warning); width:80%; border-radius:4px 4px 0 0; animation: growBar 0.8s ease-out 0.4s backwards;">
                                 </div>
                             </div>
                             <div style="font-size:9px; font-weight:bold; color:#555; margin-top:8px;">BUY NOW</div>
                         </div>
-                    </div>
 
+                        <!-- WAIT BAR (OPTIMAL) -->
+                        <div onclick="selectScenario('wait')" class="chart-col"
+                            style="width:30%; text-align:center; cursor:pointer; opacity:1;" id="bar-wait">
+                            <div
+                                style="height:140px; display:flex; flex-direction:column; justify-content:flex-end; align-items:center;">
+                                <div style="font-size:10px; font-weight:bold; color:var(--success); margin-bottom:3px;">
+                                    $203k</div>
+                                <div style="font-size:11px; font-weight:bold; color:var(--success); margin-bottom:5px;">
+                                    Target Met</div>
+                                <div
+                                    style="height:100%; background:var(--success); width:80%; border-radius:4px 4px 0 0; animation: growBar 0.8s ease-out 0.2s backwards;">
+                                </div>
+                            </div>
+                            <div style="font-size:9px; font-weight:bold; color:#555; margin-top:8px;">
+                                SMART WAIT
+                                <div
+                                    style="background:var(--success); color:white; font-size:7px; padding:1px 4px; border-radius:6px; margin-top:2px; display:inline-block;">
+                                    AI PICK</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="smart-wait-settings" style="display:none; margin-bottom:15px;">
+                        <h4 style="margin-top:0; margin-bottom:10px; font-size:14px; color:var(--cibc-dark);">Smart Wait
+                            Action Items</h4>
+                        <div id="action-items-list">
+                            <!-- Action items will be populated here by JS -->
+                        </div>
+                    </div>
                     <div id="scenario-details" style="background:#f9f9f9; padding:15px; border-radius:8px;">
                         <h3 id="detail-title" style="margin:0 0 5px 0;">Wait 18 Months</h3>
-                        <p id="detail-desc" style="font-size:13px; margin:0 0 10px 0;">Build larger down payment to
-                            reduce monthly costs and interest.</p>
-                        <div
+                        <p id="detail-desc" style="font-size:13px; margin:0 0 10px 0;">Build 20% down payment using FHSA
+                            optimization.</p>
+                        <div id="detail-cost-container"
                             style="display:flex; justify-content:space-between; font-size:13px; border-top:1px solid #e0e0e0; padding-top:8px;">
-                            <span>Monthly Cost:</span>
-                            <span id="detail-cost" style="font-weight:bold;">$3,800</span>
+                            <span id="detail-cost"></span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:5px;">
-                            <span>Confidence:</span>
-                            <span id="detail-conf" style="font-weight:bold; color:var(--success);">High (75%)</span>
+                        <div id="detail-conf-container"
+                            style="display:flex; justify-content:space-between; font-size:13px; margin-top:5px;">
+                            <span id="detail-conf"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="ai-insight">
-                    💡 <strong>Smart Insights:</strong> <strong>Smart Wait</strong> (~18 months) generates <strong>+$25k
-                        more net worth</strong> than Buy Now by avoiding high-ratio insurance fees.
+                    💡 <strong>Analyst Insight:</strong> <span id="analyst-insight-text"><strong>Smart Wait</strong>
+                        hits your $100k target in 18 months
+                        and saves you significant mortgage interest vs Buying Now.</span>
                 </div>
 
-                <button class="cta-btn" onclick="goToScreen(3)">Build my readiness plan</button>
+                <button class="cta-btn" onclick="handleBuildPlan()">Build my readiness plan</button>
             </div>
         </div>
 
@@ -574,99 +929,225 @@
             </div>
 
             <div class="content-container">
-                <div class="card" style="text-align:center; padding:15px;">
-                    <h3 style="margin-top:0; font-size:14px;">Time to Readiness</h3>
+                <!-- SMART WAIT VIEW (Existing) -->
+                <div id="readiness-wait-view">
+                    <!-- DEPRECATED READINESS RING - HIDDEN -->
+                    <div class="card" style="display:none; text-align:center; padding:15px;">
+                        <h3 style="margin-top:0; font-size:14px;">Time to Readiness</h3>
 
-                    <div style="position:relative; width:130px; height:130px; margin:10px auto;">
-                        <svg width="130" height="130" viewBox="0 0 120 120">
-                            <circle cx="60" cy="60" r="54" fill="none" stroke="#eee" stroke-width="8" />
-                            <circle id="readiness-ring" cx="60" cy="60" r="54" fill="none" stroke="#A50021"
-                                stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="339.292"
-                                transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 1s ease-out;" />
-                        </svg>
+                        <div style="position:relative; width:130px; height:130px; margin:10px auto;">
+                            <svg width="130" height="130" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="54" fill="none" stroke="#eee" stroke-width="8" />
+                                <circle id="readiness-ring" cx="60" cy="60" r="54" fill="none" stroke="#A50021"
+                                    stroke-width="8" stroke-dasharray="339.292" stroke-dashoffset="339.292"
+                                    transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 1s ease-out;" />
+                            </svg>
+                            <div
+                                style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
+                                <div id="months-val" style="font-size:30px; font-weight:bold; color:var(--cibc-dark);">
+                                    14
+                                </div>
+                                <div style="font-size:10px; color:#666;">Months</div>
+                            </div>
+                        </div>
+
+                        <!-- INTEGRATED STRESS TEST TOGGLE -->
                         <div
-                            style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center;">
-                            <div id="months-val" style="font-size:30px; font-weight:bold; color:var(--cibc-dark);">14
+                            style="background:#f9f9f9; border-radius:8px; padding:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                            <div style="text-align:left;">
+                                <span style="font-size:11px; font-weight:bold; color:var(--cibc-dark);">Stress Test
+                                    Mode</span>
+                                <span class="info-icon" style="font-size:8px; width:10px; height:10px;"
+                                    onclick="showInfo('Stress Test', 'See impact of a +2% interest rate hike.')">ⓘ</span>
+                                <div style="font-size:9px; color:#666;">Simulate +2% rates</div>
                             </div>
-                            <div style="font-size:10px; color:#666;">Months</div>
+                            <div id="stress-toggle" onclick="toggleStressTest()"
+                                style="width:30px; height:18px; background:rgba(0,0,0,0.2); border-radius:10px; position:relative; cursor:pointer; transition:background 0.3s;">
+                                <div id="stress-knob"
+                                    style="width:14px; height:14px; background:white; border-radius:50%; position:absolute; top:2px; left:2px; transition:left 0.3s; box-shadow:0 1px 3px rgba(0,0,0,0.2);">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:10px; margin-top:5px;">
+                            <div style="text-align:left;">
+                                <div style="font-size:10px; color:#888;">Current Gap</div>
+                                <div id="gap-val" style="font-weight:bold; color:var(--cibc-red); font-size:14px;">
+                                    -$15,000
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:10px; color:#888;">Monthly Savings</div>
+                                <div id="savings-val" style="font-weight:bold; color:var(--success); font-size:14px;">
+                                    +$200/mo</div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- INTEGRATED STRESS TEST TOGGLE -->
-                    <div
-                        style="background:#f9f9f9; border-radius:8px; padding:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-                        <div style="text-align:left;">
-                            <span style="font-size:11px; font-weight:bold; color:var(--cibc-dark);">Stress Test
-                                Mode</span>
-                            <span class="info-icon" style="font-size:8px; width:10px; height:10px;"
-                                onclick="showInfo('Stress Test', 'See impact of a +2% interest rate hike.')">ⓘ</span>
-                            <div style="font-size:9px; color:#666;">Simulate +2% rates</div>
+                    <!-- NEW SIMPLE TIMELINE CARD -->
+                    <div id="timeline-card" class="card" style="text-align:left; padding:20px; margin-bottom:15px;">
+                        <h3 style="margin-top:0; font-size:16px; color:var(--cibc-dark);">Smart Wait Timeline</h3>
+                        <div id="timeline-content" style="font-size:13px; line-height:1.8; color:#555;">
+                            <!-- Populated by JS -->
                         </div>
-                        <div id="stress-toggle" onclick="toggleStressTest()"
-                            style="width:30px; height:18px; background:rgba(0,0,0,0.2); border-radius:10px; position:relative; cursor:pointer; transition:background 0.3s;">
-                            <div id="stress-knob"
-                                style="width:14px; height:14px; background:white; border-radius:50%; position:absolute; top:2px; left:2px; transition:left 0.3s; box-shadow:0 1px 3px rgba(0,0,0,0.2);">
+                    </div>
+
+                    <p id="lbl-savings" class="label" style="font-size:9px; margin:10px 0 5px; word-wrap: break-word;">
+                        TOTAL
+                        MONTHLY
+                        SAVINGS<br />(Including Products)</p>
+                    <!-- SLIDER REMOVED -->
+
+                    <p id="lbl-recommended" class="label" style="font-size:10px; margin:10px 0 5px;">RECOMMENDED ACTIONS
+                        (AI)</p>
+
+                    <!-- RECOMMENDED ACTIONS CONTAINER -->
+                    <div id="rec-list">
+                        <!-- Action 1 -->
+                        <div class="product-card fhsa"
+                            style="border-left-color: var(--cibc-red); align-items:flex-start;">
+                            <div class="product-details">
+                                <div class="product-title">FHSA Auto-Contrib <span class="info-icon"
+                                        onclick="showInfo('FHSA (First Home Savings Account)', 'A registered account allowing you to save $8k/year tax-free (up to $40k lifetime). Contributions are tax-deductible, and withdrawals for a home are tax-free.')">ⓘ</span>
+                                </div>
+                                <p style="font-size:12px; margin:0;">Save $8k/year tax-free. ~30% boost.</p>
+                                <div class="product-impact" style="margin-top:4px;">+ Reduces taxes & gap</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="check-fhsa" checked onchange="togglePlanItem('fhsa')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Action 2 -->
+                        <div class="product-card hbp" style="border-left-color: #1976D2; align-items:flex-start;">
+                            <div class="product-details">
+                                <div class="product-title">HBP Lumpsum <span class="info-icon"
+                                        onclick="showInfo('HBP (Home Buyers Plan)', 'Allows you to withdraw up to $60k from your RRSP tax-free to buy a home. You must repay this amount over 15 years starting the second year after withdrawal.')">ⓘ</span>
+                                </div>
+                                <p style="font-size:12px; margin:0;">Unlock RRSP without penalty.</p>
+                                <div class="product-impact" style="margin-top:4px;">+ Access to $60k liquidity</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="check-hbp" checked onchange="togglePlanItem('hbp')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="cta-btn" onclick="goToScreen(5)">Run Mortgage Pre-Check (AI)</button>
+                    <button class="cta-secondary" onclick="alert('Connecting to Advisor...')"
+                        style="margin-top:10px; width:100%;">Speak to an Advisor</button>
+                </div>
+
+                <!-- BUY NOW VIEW (New Design) -->
+                <div id="readiness-buy-view" style="display:none; text-align:center;">
+
+                    <!-- 1. Mortgage Freedom Gauge -->
+                    <div class="card"
+                        style="padding:20px; text-align:center; margin-bottom:15px; border-top: 4px solid var(--cibc-red);">
+                        <h3 style="margin:0 0 15px 0; font-size:15px; font-weight:bold; color:#333;">Mortgage Freedom
+                        </h3>
+
+                        <div style="width:140px; height:140px; margin:0 auto; position:relative;">
+                            <svg width="140" height="140" viewBox="0 0 140 140">
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="#eee" stroke-width="8" />
+                                <!-- Static 43.0 Years (approx 75% full) -->
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="#e0e0e0" stroke-width="8" />
+                                <circle cx="70" cy="70" r="60" fill="none" stroke="#333" stroke-width="8"
+                                    stroke-dasharray="377" stroke-dashoffset="180" stroke-linecap="round"
+                                    transform="rotate(-220 70 70)" />
+                            </svg>
+                            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
+                                <div style="font-size:36px; font-weight:bold; color:#333; line-height:1;">43.0</div>
+                                <div style="font-size:12px; color:#666;">Years</div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- 2. Stress Test Toggle -->
                     <div
-                        style="display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:10px; margin-top:5px;">
+                        style="background:#f5f5f5; padding:12px 15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                         <div style="text-align:left;">
-                            <div style="font-size:10px; color:#888;">Current Gap</div>
-                            <div id="gap-val" style="font-weight:bold; color:var(--cibc-red); font-size:14px;">-$15,000
-                            </div>
+                            <div style="font-weight:bold; font-size:13px; color:#333;">Stress Test Mode <span
+                                    class="info-icon" style="font-size:10px;">ⓘ</span></div>
+                            <div style="font-size:11px; color:#666;">Simulate +2% rates</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- 3. Stats Row -->
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:15px; border-bottom:1px solid #eee; margin-bottom:20px;">
+                        <div style="text-align:left;">
+                            <div style="font-size:11px; color:#888;">Current Gap</div>
+                            <div style="color:#A50021; font-weight:bold; font-size:15px;">Balance: $500k <span
+                                    style="font-size:11px; font-weight:normal; color:#666;">(High Ratio)</span></div>
                         </div>
                         <div style="text-align:right;">
-                            <div style="font-size:10px; color:#888;">Monthly Savings</div>
-                            <div id="savings-val" style="font-weight:bold; color:var(--success); font-size:14px;">
-                                +$200/mo</div>
+                            <div style="font-size:11px; color:#888;">Monthly Savings</div>
+                            <div style="color:#2E7D32; font-weight:bold; font-size:15px;">+$200/mo</div>
                         </div>
                     </div>
-                </div>
 
-                <p class="label" style="font-size:10px; margin:10px 0 5px;">TOTAL ADJUSTED SAVINGS</p>
-                <div class="card" style="padding:12px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-size:12px;">Adjust Savings</span>
-                        <span id="slider-label-val"
-                            style="font-weight:bold; color:var(--cibc-dark); font-size:12px;">+$200/mo</span>
-                    </div>
-                    <input type="range" class="slider" min="0" max="2000" step="50" value="200"
-                        oninput="updateSimulator(this.value)" style="margin:10px 0;">
-                    <p style="font-size:10px; color:#666; margin:0;">See how saving more accelerates your timeline.</p>
-                </div>
-
-                <p class="label" style="font-size:10px; margin:10px 0 5px;">RECOMMENDED ACTIONS (AI)</p>
-
-                <!-- RECOMMENDED ACTIONS CONTAINER -->
-                <div id="rec-list">
-                    <!-- Action 1 -->
-                    <div class="product-card fhsa" style="border-left-color: var(--cibc-red);">
-                        <div class="product-details">
-                            <div class="product-title">Enable Auto-Contribution (FHSA) <span class="info-icon"
-                                    onclick="showInfo('FHSA Benefits', 'Tax-free growth means your $8k contribution is essentially worth ~30% more in buying power vs a standard account.')">ⓘ</span>
+                    <!-- 4. Total Adjusted Savings -->
+                    <div class="card" style="padding:15px; text-align:left; margin-bottom:20px;">
+                        <div
+                            style="font-size:10px; font-weight:bold; color:#888; margin-bottom:10px; text-transform:uppercase;">
+                            Total Adjusted Savings</div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                            <span style="font-weight:500; font-size:14px;">Adjust Savings</span>
+                            <span style="font-weight:bold; font-size:14px;">+$200/mo</span>
+                        </div>
+                        <!-- Static Slider Visual -->
+                        <div
+                            style="height:6px; background:#e0e0e0; border-radius:3px; position:relative; margin:10px 0;">
+                            <div style="width:20%; height:100%; background:#1976D2; border-radius:3px;"></div>
+                            <div
+                                style="width:16px; height:16px; background:#1976D2; border-radius:50%; position:absolute; top:-5px; left:20%;">
                             </div>
-                            <p>Save $8k/year tax-free.</p>
-                            <div class="product-impact">+ Reduces taxes & gap</div>
                         </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Activate</button>
+                        <div style="font-size:11px; color:#666;">See how saving more accelerates your timeline.</div>
                     </div>
 
-                    <!-- Action 2 -->
-                    <div class="product-card hbp" style="border-left-color: var(--cibc-blue);">
-                        <div class="product-details">
-                            <div class="product-title">Unlock HBP Capacity <span class="info-icon"
-                                    onclick="showInfo('RRSP Home Buyers Plan', 'Withdraw up to $35k tax-free from your RRSP for your first home. We recommend moving $500/mo to fill this bucket.')">ⓘ</span>
+                    <!-- 5. Recommended Actions (AI) -->
+                    <div style="text-align:left; margin-bottom:20px;">
+                        <div
+                            style="font-size:10px; font-weight:bold; color:#888; margin-bottom:10px; text-transform:uppercase;">
+                            Recommended Actions (AI)</div>
+
+                        <!-- Lump Sum -->
+                        <div class="card"
+                            style="padding:15px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid #A50021;">
+                            <div>
+                                <div style="font-weight:bold; font-size:14px;">Lump Sum Pre-Payment</div>
+                                <div style="font-size:12px; color:#666;">Apply surplus to principal directly.</div>
+                                <div style="font-size:11px; color:#2E7D32; margin-top:3px;">- Reduces Interest</div>
                             </div>
-                            <p>Move $500/mo to HISA.</p>
-                            <div class="product-impact">+ Earn ~4% interest</div>
+                            <button
+                                style="background:none; border:1px solid #A50021; color:#A50021; font-size:12px; padding:4px 10px; border-radius:4px; font-weight:500;">Apply</button>
                         </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Review</button>
-                    </div>
-                </div>
 
-                <button class="cta-btn" onclick="updateFinalScreen(); goToScreen(4);">Start Tracking Progress</button>
+                        <!-- Double Up -->
+                        <div class="card"
+                            style="padding:15px; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid #A50021;">
+                            <div>
+                                <div style="font-weight:bold; font-size:14px;">Double-Up Payments</div>
+                                <div style="font-size:12px; color:#666;">Increase monthly payment velocity.</div>
+                                <div style="font-size:11px; color:#2E7D32; margin-top:3px;">- Years off Mortgage</div>
+                            </div>
+                            <button
+                                style="background:none; border:1px solid #A50021; color:#A50021; font-size:12px; padding:4px 10px; border-radius:4px; font-weight:500;">Enable</button>
+                        </div>
+                    </div>
+
+                    <button class="cta-btn" onclick="goToScreen(5)" style="margin-bottom:10px;">Run Mortgage Pre-Check
+                        (AI)</button>
+                </div>
             </div>
         </div>
 
@@ -675,7 +1156,8 @@
             <div class="app-header">
                 <div class="app-header-top" style="display:flex; justify-content:space-between; align-items:center;">
                     <!-- SVG Back Button -->
-                    <button class="back-btn" onclick="goToScreen(3)"
+                    <button class="back-btn"
+                        onclick="if(appState.scenarioType==='rent'){goToScreen(2);}else{goToScreen(3);}"
                         style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; padding:0;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -711,7 +1193,7 @@
                 </div>
 
                 <div style="margin:30px auto;">
-                    <div
+                    <div id="conf-score-label"
                         style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#666; margin-bottom:15px;">
                         Confidence Score</div>
                     <!-- Bubble Styling with Stronger Shadow -->
@@ -723,23 +1205,23 @@
                     </div>
                 </div>
 
-                <div class="card" style="text-align:left;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <span>Projected Down Payment</span>
-                        <span id="final-downpmt" style="font-weight:bold; color:var(--warning);">Gap: $15,000</span>
+                <div id="down-payment-card" class="card">
+                    <div class="label">Projected Down Payment</div>
+                    <div id="down-payment-val" class="val">$100k</div>
+                    <div style="font-size:11px; color:#888;">Based on your current trajectory and selected scenario.
                     </div>
-                    <p style="font-size:12px; color:#666;">Based on your current trajectory and selected scenario.</p>
                 </div>
 
                 <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
-                    <button class="cta-btn" onclick="goToScreen(5)">Run Mortgage Pre-Check (AI)</button>
+                    <button class="cta-btn" id="screen4-primary-btn" onclick="goToScreen(5)">Run Mortgage Pre-Check
+                        (AI)</button>
 
                     <button class="cta-secondary" style="margin:0; text-align:center;"
                         onclick="alert('Connecting you to a CIBC Mortgage Advisor... (Demo Only)')">Speak to an
                         Advisor</button>
 
                     <div style="margin-top:10px;">
-                        <span onclick="goToScreen(3)"
+                        <span onclick="if(appState.scenarioType==='rent'){goToScreen(2);}else{goToScreen(3);}"
                             style="font-size:12px; color:#666; text-decoration:underline; cursor:pointer;">Adjust Plan
                             settings</span>
                     </div>
@@ -747,11 +1229,11 @@
             </div>
         </div>
 
-        <!-- SCREEN 5: MORTGAGE PRE-CHECK (New) -->
+        <!-- SCREEN 5: MORTGAGE PRE-CHECK -->
         <div id="screen-5" class="screen">
             <div class="app-header" style="background-color:var(--cibc-dark);">
                 <div class="app-header-top" style="display:flex; justify-content:space-between; align-items:center;">
-                    <button class="back-btn" onclick="goToScreen(4)"
+                    <button class="back-btn" onclick="goToScreen(3)"
                         style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; padding:0;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
@@ -836,7 +1318,7 @@
                 <div style="display:flex; gap:10px; margin-top:10px;">
                     <button class="cta-secondary"
                         style="flex:1; margin:0; font-size:12px; border-color:#999; color:#666;"
-                        onclick="goToScreen(1)">Back to Start</button>
+                        onclick="goToScreen(3)">Back to Readiness Engine</button>
                 </div>
             </div>
         </div>
@@ -868,43 +1350,6 @@
             </div>
 
             <div class="content-container">
-                <style>
-                    .shock-meter {
-                        height: 8px;
-                        background: #ddd;
-                        border-radius: 4px;
-                        margin: 10px 0;
-                        overflow: hidden;
-                        position: relative;
-                    }
-
-                    .shock-val {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        height: 100%;
-                        background: var(--warning);
-                        width: 0%;
-                        transition: width 1s;
-                    }
-
-                    /* INFO ICON CSS */
-                    .info-icon {
-                        color: #999;
-                        border: 1px solid #ccc;
-                        width: 16px;
-                        height: 16px;
-                        border-radius: 50%;
-                        display: inline-flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 10px;
-                        cursor: pointer;
-                        margin-left: 5px;
-                        font-style: normal;
-                    }
-                </style>
-
                 <div class="card" style="border-top:4px solid #2c2c2c;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <h3>Renewal Risk</h3>
@@ -945,7 +1390,8 @@
                         <p style="font-size:12px; margin:0;">Lock in 4.89% (wgt avg) today.</p>
                         <div class="product-impact" style="color:#555;">Reduces shock to +$120/mo</div>
                     </div>
-                    <button class="cta-secondary" style="width:auto; margin:0; padding:6px 12px; font-size:12px;"
+                    <button id="btn-renewal-blend" class="cta-secondary"
+                        style="width:auto; margin:0; padding:6px 12px; font-size:12px;"
                         onclick="calculateRenewal(this)">Calculate</button>
                 </div>
 
@@ -956,19 +1402,131 @@
                         <p style="font-size:12px; margin:0;">+$100/mo pre-payment.</p>
                         <div class="product-impact" style="color:#555;">Saves $4,500 interest</div>
                     </div>
-                    <button class="cta-secondary" style="width:auto; margin:0; padding:6px 12px; font-size:12px;"
+                    <button id="btn-renewal-pay" class="cta-secondary"
+                        style="width:auto; margin:0; padding:6px 12px; font-size:12px;"
                         onclick="applyAction(this)">Apply</button>
                 </div>
 
                 <div class="ai-insight" style="background:#f5f5f5; border-color:#2c2c2c; color:#333;">
-                    <strong>CIBC Tip:</strong> Increasing your payment by just $50/mo now will completely neutralize the
-                    renewal shock in 2027.
+                    <strong>CIBC Tip:</strong> Increasing your payment by just $100/mo now will help you pay off your
+                    mortgage ~1.5 years early.
                 </div>
 
                 <button class="cta-btn" style="background:#2c2c2c; box-shadow:0 4px 10px rgba(0,0,0,0.3);">Speak to an
                     Advisor</button>
             </div>
         </div>
+
+        <!-- SCREEN 7: RENT VS SMART BUY SIMULATOR -->
+        <div id="screen-7" class="screen">
+            <div class="app-header">
+                <div class="app-header-top" style="display:flex; justify-content:space-between; align-items:center;">
+                    <button class="back-btn" onclick="goToScreen(2)"
+                        style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; padding:0;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
+
+                    <div class="header-title" style="flex-grow:1; text-align:center; font-size:18px;">Wealth Comparison
+                    </div>
+
+                    <button class="back-btn" onclick="goToScreen(1)"
+                        style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; padding:0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="white"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 0 0 1-2 2H5a2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-container" style="padding-top:20px;">
+                <p style="font-size:11px; color:#666; text-align:center; margin:0 0 10px 0;">
+
+                <p style="font-size:11px; color:#666; text-align:center; margin:0 0 10px 0;">
+                    5-Year Net Worth Projection
+                </p>
+
+                <!-- Comparison Bars -->
+                <div class="card compact-p" style="margin-bottom:10px;">
+                    <div
+                        style="text-align:center; margin-bottom:10px; padding:4px; background:#f0f0f0; border-radius:4px;">
+                        <span style="font-size:10px; font-weight:bold; color:#666;">YEAR 5 SNAPSHOT</span>
+                    </div>
+
+                    <!-- Rent Bar -->
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span style="font-size:11px; font-weight:bold;">💰 Rent & Invest</span>
+                            <span style="font-size:13px; font-weight:bold; color:var(--warning);">$171.6k</span>
+                        </div>
+                        <div style="background:#e0e0e0; height:20px; border-radius:4px; overflow:hidden;">
+                            <div style="background:var(--warning); height:100%; width:84.5%; transition:width 0.3s;">
+                            </div>
+                        </div>
+                        <div style="font-size:9px; color:#666; margin-top:2px;">Liquid assets in investment portfolio
+                        </div>
+                    </div>
+
+                    <!-- Smart Buy Bar -->
+                    <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                            <span style="font-size:11px; font-weight:bold;">🏡 Smart Buy</span>
+                            <span style="font-size:13px; font-weight:bold; color:var(--success);">$203.0k</span>
+                        </div>
+                        <div style="background:#e0e0e0; height:20px; border-radius:4px; overflow:hidden;">
+                            <div style="background:var(--success); height:100%; width:100%; transition:width 0.3s;">
+                            </div>
+                        </div>
+                        <div style="font-size:9px; color:#666; margin-top:2px;">Home equity + liquid savings (net of
+                            mortgage)</div>
+                    </div>
+                </div>
+
+                <!-- Near Parity Badge -->
+                <div class="card compact-p"
+                    style="background:#e3f2fd; border-left:4px solid #1976d2; text-align:center; margin-bottom:10px;">
+                    <div style="font-size:12px; font-weight:bold; color:#1565c0;">🏆 Smart Buy Ahead by ~$31k</div>
+                    <div style="font-size:10px; margin-top:2px; color:#555;">At Year 5, homeownership with smart timing
+                        wins</div>
+                </div>
+
+                <!-- Key Insight -->
+                <div class="compact-p"
+                    style="margin-bottom:10px; background:#fff9e6; border-radius:4px; border-left:4px solid #f57c00;">
+                    <div style="font-size:10px; color:#555; line-height:1.4;">
+                        <strong style="color:#e65100;">Smart Buy Advantage:</strong><br>
+                        • No CMHC insurance (saves $13.9k)<br>
+                        • 20% down = lower monthly payment<br>
+                        • Ownership confidence from Day 1
+                    </div>
+                </div>
+
+                <!-- Assumptions (Required) -->
+                <div class="compact-p"
+                    style="margin-bottom:10px; background:#f9f9f9; border-radius:4px; border:1px solid #e0e0e0;">
+                    <div style="font-size:9px; color:#666; line-height:1.5;">
+                        <strong>Assumptions (Illustrative):</strong><br>
+                        • $1,500/month net savings invested<br>
+                        • 6% investment return (rent path)<br>
+                        • Smart Buy purchase after ~25 months with 20% down<br>
+                        • 5.5% mortgage rate, 25-year amortization<br>
+                        • 4% annual home price appreciation (assumption)<br>
+                        • Excludes property tax, maintenance, and transaction costs
+                    </div>
+                </div>
+
+                <button class="cta-secondary" onclick="goToScreen(2)" style="margin-top:5px; width:100%; padding:10px;">
+                    Back to Scenario Explorer
+                </button>
+            </div>
+        </div>
+
+
 
         <!-- INFO MODAL (Overlay) -->
         <div id="info-modal"
@@ -1009,376 +1567,324 @@
         // ---------------------------------------------------------
 
         var appState = {
-            scenarioType: 'wait', // Default per AI Recommendation
-            savingsAmount: 2000,
-            initialSavings: 42500,
-            isStressTest: false,
-            stressTestPenalty: 0,
-            monthsRemovedBySavings: 0,
-            baseMonths: 18,
-            baseGap: 15000
+            scenarioType: 'wait',
+            planMode: 'recommended', // 'recommended' | 'buyNowFallback'
+            checks: {
+                fhsa: true,
+                hbp: true
+            }
         };
 
-        // NAVIGATION
+        // FIT TEXT HELPER (User Requirement 5)
+        function fitTextInCircle(elementId, maxFontSize = 30) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            let size = maxFontSize;
+            el.style.fontSize = size + 'px';
+            while (el.scrollWidth > el.clientWidth && size > 10) {
+                size--;
+                el.style.fontSize = size + 'px';
+            }
+        }
+
+        // NAVIGATION (User Requirement 2)
         function goToScreen(screenId) {
-            // Slide Animations
             document.querySelectorAll('.screen').forEach(s => {
                 s.classList.remove('active');
                 s.classList.remove('previous');
             });
-
             const current = document.getElementById('screen-' + screenId);
-            current.classList.add('active');
+            if (current) current.classList.add('active');
 
-            // Handle "Previous" stack visual
+            // NEW: Toggle Views for Screen 3 (Readiness Engine) based on Scenario
+            if (screenId === 3) {
+                const waitView = document.getElementById('readiness-wait-view');
+                const buyView = document.getElementById('readiness-buy-view');
+
+                // Show Buy View if scenario is 'buy' OR if we are in fallback mode
+                if (appState.scenarioType === 'buy' || appState.planMode === 'buyNowFallback') {
+                    if (waitView) waitView.style.display = 'none';
+                    if (buyView) buyView.style.display = 'block';
+                } else {
+                    if (waitView) waitView.style.display = 'block';
+                    if (buyView) buyView.style.display = 'none';
+                }
+            }
+
+            // Stack visuals
             if (screenId > 1) {
                 const prev = document.getElementById('screen-' + (screenId - 1));
                 if (prev) prev.classList.add('previous');
             }
-
-            // Trigger Render if entering Engine
-            if (screenId === 3) renderState();
         }
 
-        // SCENARIO SELECTION & LOGIC MAPPING
+        // INTERACTIVITY
+        function togglePlanItem(item) {
+            appState.checks[item] = !appState.checks[item];
+
+            // Logic: All must be checked to get Recommended Plan
+            if (appState.checks.fhsa && appState.checks.hbp) {
+                appState.planMode = 'recommended';
+            } else {
+                appState.planMode = 'buyNowFallback';
+            }
+            // Re-render Screen 3 UI to show state/warnings
+            selectScenario(appState.scenarioType);
+        }
+
+        function restorePlan() {
+            appState.checks.fhsa = true;
+            appState.checks.hbp = true;
+            appState.planMode = 'recommended';
+            selectScenario('wait');
+        }
+
+        // SCENARIO SELECTION (User Requirement 2 & 3)
         function selectScenario(type) {
-            // Visual Update for Chart
+            appState.scenarioType = type;
+
+            // Visual Update
             document.querySelectorAll('.chart-col').forEach(c => c.style.opacity = '0.5');
             document.getElementById('bar-' + type).style.opacity = '1';
 
-            // Update Details Box
+            // Clean Details Box
+            const recList = document.getElementById('rec-list');
             const title = document.getElementById('detail-title');
             const desc = document.getElementById('detail-desc');
             const cost = document.getElementById('detail-cost');
             const conf = document.getElementById('detail-conf');
-            const recList = document.getElementById('rec-list');
 
-            appState.scenarioType = type;
+            // Timeline Card Reference (control visibility per scenario)
+            const timelineCard = document.getElementById('timeline-card');
+
+            // HIDE SLIDER (Safety Check)
+            const slider = document.querySelector('.slider-card');
+            if (slider) slider.style.display = 'none';
 
             if (type === 'rent') {
+                let p = MathEngine.getRentProfile();
                 title.innerText = "Rent & Invest";
-                desc.innerText = "Maintain flexibility, but miss out on automatic equity build-up.";
-                cost.innerText = "$2,600";
-                conf.innerText = "High (85%)";
-                conf.style.color = "var(--success)";
-
-                // ACTION INJECTION (Rent)
-                // We map RRSP to 'fhsa' class and HISA to 'hbp' class to reuse the Savings Logic (Syncs buttons to Slider)
+                desc.innerText = "Maximize liquidity. No home equity.";
+                cost.innerHTML = `Net Worth: <span style="color:var(--success)">$${(p.netWorth / 1000).toFixed(1)}k</span>`;
+                conf.innerText = "Return: 6.0%";
+                conf.style.color = "var(--cibc-dark)";
                 recList.innerHTML = `
-                    <div class="product-card fhsa" style="border-left-color: var(--cibc-dark);">
-                        <div class="product-details">
-                            <div class="product-title">Start RRSP Investing</div>
-                            <p>Contributions deduct from your taxable income.</p>
-                            <div class="product-impact">+ Tax Efficiency</div>
-                        </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Activate</button>
-                    </div>
-                    <div class="product-card hbp" style="border-left-color: var(--warning);">
-                        <div class="product-details">
-                            <div class="product-title">High Interest Savings <span class="info-icon" onclick="showInfo('Smart Savings', 'Keep your funds liquid while earning competitive interest rates.')">ⓘ</span></div>
-                            <p>Earn 4% on your liquid emergency fund.</p>
-                            <div class="product-impact">+ Flexible Access</div>
-                        </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Review</button>
-                    </div>
-                `;
+                    <div style="padding:10px; color:#666; font-size:12px;">
+                        Standard market investment strategy.<br>
+                        <span style="font-size:10px; color:#888;">*Assumes $1,500/mo net savings (after living expenses).</span>
+                    </div>`;
 
-                updateSimulator(400); // Passive savings defaults
-                appState.baseMonths = 36;
-                appState.baseGap = 0;
+                // Update Analyst Insight
+                const analystText = document.getElementById('analyst-insight-text');
+                if (analystText) analystText.innerHTML = '<strong>Rent & Invest</strong> gives you maximum liquidity ($171.6k projected at Year 5) but no home equity.';
+
+                // HIDE timeline card for Rent
+                if (timelineCard) timelineCard.style.display = 'none';
 
             } else if (type === 'buy') {
+                let p = MathEngine.getBuyNowProfile();
                 title.innerText = "Buy Now";
-                desc.innerText = "Enter market immediately. High initial costs limit monthly saving capacity.";
-                cost.innerText = "$4,100";
-                conf.innerText = "Low (40%)";
+                desc.innerText = "Immediate purchase. High ratio mortgage.";
+                cost.innerHTML = `Payment: <span style="color:var(--cibc-red)">$${p.monthlyPayment.toFixed(0)}/mo</span>`;
+                conf.innerText = p.isHighRatio ? "High Ratio" : "Conventional";
                 conf.style.color = "var(--danger)";
-
-                // ACTION INJECTION (Buy)
-                // Lump Sum mapped to 'fhsa' logic (Big boost), Double-Up to 'hbp'
                 recList.innerHTML = `
-                    <div class="product-card fhsa" style="border-left-color: var(--cibc-red);">
-                        <div class="product-details">
-                            <div class="product-title">Lump Sum Pre-Payment</div>
-                            <p>Apply surplus to principal directly.</p>
-                            <div class="product-impact">- Reduces Interest</div>
-                        </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Apply</button>
-                    </div>
-                    <div class="product-card hbp" style="border-left-color: var(--cibc-red);">
-                        <div class="product-details">
-                            <div class="product-title">Double-Up Payments</div>
-                            <p>Increase monthly payment velocity.</p>
-                            <div class="product-impact">- Years off Mortgage</div>
-                        </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Enable</button>
-                    </div>
-                `;
+                    <div style="padding:15px; color:#555; font-size:13px; line-height:1.7; word-wrap:break-word; overflow-wrap:break-word;">
+                        <div style="font-weight:bold; margin-bottom:8px; color:var(--cibc-dark);">📋 What this means:</div>
+                        <div style="margin-bottom:6px;">• <strong>Down payment:</strong> $50k (10% of home price)</div>
+                        <div style="margin-bottom:6px;">• <strong>CMHC insurance:</strong> Required for &lt;20% down ($${(p.insuranceCost / 1000).toFixed(1)}k added to mortgage)</div>
+                        <div style="margin-bottom:6px;">• <strong>Monthly payment:</strong> $${p.monthlyPayment.toFixed(0)}/mo for 25 years</div>
+                        <div style="margin-bottom:6px;">• <strong>Liquidity:</strong> Only $15k emergency buffer remains</div>
+                        <div style="margin-top:10px; font-size:11px; color:#888; font-style:italic;">This path maximizes speed but increases financial strain.</div>
+                    </div>`;
 
-                updateSimulator(200); // "House Poor" default logic
-                appState.baseMonths = 36;
-                appState.baseGap = 35000;
+                // Update Analyst Insight
+                const analystText = document.getElementById('analyst-insight-text');
+                if (analystText) analystText.innerHTML = '<strong>Buy Now</strong> costs you $13.9k in CMHC insurance fees and leaves only $15k emergency buffer.';
+
+                // HIDE timeline card for Buy Now
+                if (timelineCard) timelineCard.style.display = 'none';
 
             } else {
-                title.innerText = "Smart Wait (18 Mo)";
-                desc.innerText = "Strategic Growth Strategy: Maximize tax-sheltered savings while renting to accelerate your 20% down payment.";
-                cost.innerText = "$2,600";
-                conf.innerText = "High (95%)";
+                let p = MathEngine.getSmartWaitProfile();
+                title.innerText = "Smart Wait";
+                desc.innerText = `Optimize down payment strategy.`;
+                cost.innerHTML = `Ready In: <span style="color:var(--success)">${p.readyMonths} Months</span>`;
+                conf.innerText = "Target Met";
                 conf.style.color = "var(--success)";
 
-                // ACTION INJECTION (Smart Wait - Default)
-                recList.innerHTML = `
-                    <div class="product-card fhsa" style="border-left-color: var(--cibc-red);">
-                        <div class="product-details">
-                            <div class="product-title">Enable Auto-Contribution (FHSA) <span class="info-icon" onclick="showInfo('FHSA Benefits', 'Tax-free growth means your $8k contribution is essentially worth ~30% more in buying power.')">ⓘ</span></div>
-                            <p>Save $8k/year tax-free.</p>
-                            <div class="product-impact">+ Reduces taxes & gap</div>
-                        </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Activate</button>
-                    </div>
-                    <div class="product-card hbp" style="border-left-color: var(--cibc-blue);">
-                        <div class="product-details">
-                            <div class="product-title">Unlock HBP Capacity <span class="info-icon" onclick="showInfo('RRSP Home Buyers Plan', 'Withdraw up to $35k tax-free from your RRSP for your first home.')">ⓘ</span></div>
-                            <p>Move $500/mo to HISA.</p>
-                            <div class="product-impact">+ Earn ~4% interest</div>
-                        </div>
-                        <button class="cta-secondary" onclick="toggleCheck(this)">Review</button>
-                    </div>
-                `;
+                // Update Analyst Insight
+                const analystText = document.getElementById('analyst-insight-text');
+                if (analystText) analystText.innerHTML = '<strong>Smart Wait</strong> hits your $100k target in ' + p.readyMonths + ' months with FHSA+HBP, avoiding $13.9k in CMHC fees.';
 
-                updateSimulator(2000); // Aggressive optimization default
-                appState.baseMonths = 18;
-                appState.baseGap = 15000;
+                // SHOW timeline card for Smart Wait only
+                if (timelineCard) timelineCard.style.display = 'block';
+
+                // INTERACTIVE CHECKBOXES
+                let html = `<div style="font-size:12px; margin-bottom:10px; color:#666;">Strategy Components:</div>`;
+
+                // Warning Banner
+                if (appState.planMode === 'buyNowFallback') {
+                    html += `
+                    <div style="background:#ffebee; border-left:4px solid var(--cibc-red); padding:8px; margin-bottom:10px; border-radius:4px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:11px; color:#c62828;">Strategy incomplete. Reverts to <strong>Buy Now</strong> reality.</span>
+                        <button onclick="restorePlan()" style="background:#c62828; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer;">Restore</button>
+                    </div>`;
+                }
+
+                // FHSA Item
+                let fhsaCheck = appState.checks.fhsa ?
+                    `<span style="color:var(--success); font-weight:bold;">&#9745;</span>` :
+                    `<span style="color:#999; font-weight:bold;">&#9744;</span>`;
+
+                let fhsaOpacity = appState.checks.fhsa ? '1' : '0.6';
+
+                html += `
+                <div class="product-card" onclick="togglePlanItem('fhsa')" style="border-left-color: var(--cibc-red); cursor:pointer; opacity:${fhsaOpacity}; user-select:none;">
+                    <div class="product-details">
+                        <div class="product-title" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>${fhsaCheck} FHSA Auto-Contrib</span>
+                            <span class="info-icon" onclick="event.stopPropagation(); showInfo('FHSA', 'First Home Savings Account: Tax-deductible contributions and tax-free withdrawals for your first home.')">ⓘ</span>
+                        </div>
+                        <p>Save $8k/year tax-free. ~30% boost.</p>
+                    </div>
+                </div>`;
+
+                // HBP Item
+                let hbpCheck = appState.checks.hbp ?
+                    `<span style="color:var(--success); font-weight:bold;">&#9745;</span>` :
+                    `<span style="color:#999; font-weight:bold;">&#9744;</span>`;
+                let hbpOpacity = appState.checks.hbp ? '1' : '0.6';
+
+                html += `
+                <div class="product-card" onclick="togglePlanItem('hbp')" style="border-left-color: var(--cibc-blue); cursor:pointer; opacity:${hbpOpacity}; user-select:none;">
+                    <div class="product-details">
+                        <div class="product-title" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>${hbpCheck} HBP Lumpsum</span>
+                            <span class="info-icon" onclick="event.stopPropagation(); showInfo('HBP', 'Home Buyers Plan: Withdraw up to $60k from your RRSP tax-free to buy a home.')">ⓘ</span>
+                        </div>
+                        <p>Unlock RRSP without penalty.</p>
+                    </div>
+                </div>`;
+
+                recList.innerHTML = html;
+
+                // POPULATE TIMELINE CARD
+                const timelineContent = document.getElementById('timeline-content');
+                if (timelineCard && timelineContent) {
+                    let readyDate = new Date();
+                    readyDate.setMonth(readyDate.getMonth() + p.readyMonths);
+                    let dateStr = readyDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+                    let targetMet = p.availableDP >= 100000 ? 'YES ✓' : 'NO';
+
+                    timelineContent.innerHTML = `
+                        <div style="margin-bottom:12px;">
+                            <strong>Today:</strong> $${(65000 / 1000).toFixed(0)}k liquid wealth<br>
+                            <span style="font-size:11px; color:#888;">($15k emergency buffer preserved)</span>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <strong>Month ${p.readyMonths}:</strong> $${(p.availableDP / 1000).toFixed(1)}k available<br>
+                            <span style="font-size:11px; color:#888;">(${dateStr})</span>
+                        </div>
+                        <div>
+                            <strong>20% Target Met:</strong> <span style="color:${p.availableDP >= 100000 ? 'var(--success)' : 'var(--danger)'}; font-weight:bold;">${targetMet}</span><br>
+                            <span style="font-size:11px; color:#888;">Assumes minimum 20% down payment</span>
+                        </div>
+                    `;
+                }
             }
         }
 
-        // STRESS TEST LOGIC
+        // STRESS TEST LOGIC (Legacy Removal)
         function toggleStressTest() {
-            appState.isStressTest = !appState.isStressTest;
-
-            const knob = document.getElementById('stress-knob');
-            const toggle = document.getElementById('stress-toggle');
-            const banner = document.getElementById('stress-banner');
-
-            if (appState.isStressTest) {
-                knob.style.left = '18px';
-                toggle.style.background = 'var(--cibc-red)';
-                banner.style.display = 'block';
-                // Penalty Logic: Gap increases by $15k (purchasing power loss)
-                appState.stressTestPenalty = 15000;
-            } else {
-                knob.style.left = '2px';
-                toggle.style.background = 'rgba(0,0,0,0.3)';
-                banner.style.display = 'none';
-                appState.stressTestPenalty = 0;
-            }
-            renderState();
+            // Disabled/Hidden by CSS if possible, logic made empty
         }
 
-        // CORE RENDER ENGINE
+        // CORE RENDER ENGINE (Simplified to prevent errors)
         function renderState() {
-            const monthsDisplay = document.getElementById('months-val');
-            const gapDisplay = document.getElementById('gap-val');
-            const savingsDisplay = document.getElementById('savings-val');
-            const sliderLabel = document.getElementById('slider-label-val'); // NEW ID
-            const ring = document.getElementById('readiness-ring');
-            const titleDisplay = document.querySelector('#screen-3 h3');
-            const subtextDisplay = monthsDisplay.nextElementSibling;
-
-            // Update Savings UI (Top Right & Slider Label)
-            const savingsText = "+$" + appState.savingsAmount + "/mo";
-            if (savingsDisplay) savingsDisplay.innerText = savingsText;
-            if (sliderLabel) sliderLabel.innerText = savingsText; // SYNCED!
-
-            // ----------------------------------------------------------------
-            // SCENARIO 1 & 3: RENT OR WAIT -> GOAL: DOWN PAYMENT (WEALTH)
-            // ----------------------------------------------------------------
-            if (appState.scenarioType === 'rent' || appState.scenarioType === 'wait') {
-                titleDisplay.innerText = "Projected Liquid Wealth";
-                if (appState.scenarioType === 'wait') titleDisplay.innerText = "Smart Plan Wealth";
-
-                let initialSavings = 35000;
-                let wealthTarget = 120000;
-
-                // Dynamic Horizon: 18 months for Wait, 36 for Rent/others
-                let horizon = (appState.scenarioType === 'wait') ? 18 : 36;
-                let horizonLabel = (appState.scenarioType === 'wait') ? "Projected (18 Mo)" : "Projected Total (3 Yrs)";
-
-                let investmentValue = initialSavings + (appState.savingsAmount * horizon);
-
-                // Wealth Display (Nominal)
-                let displayVal = (investmentValue / 1000).toFixed(1);
-                monthsDisplay.innerText = "$" + displayVal + "k";
-                monthsDisplay.style.fontSize = "24px";
-                if (subtextDisplay) subtextDisplay.innerText = horizonLabel;
-
-                // Gap Calculation
-                let netGap = wealthTarget - investmentValue + appState.stressTestPenalty;
-
-                if (netGap > 0) {
-                    gapDisplay.innerHTML = "Gap to 20%: -$" + (netGap / 1000).toFixed(1) + "k";
-                    gapDisplay.style.color = "var(--cibc-red)";
-                } else {
-                    gapDisplay.innerHTML = "20% Down Met! <span style='font-size:10px; color:#666;'>(Surplus)</span>";
-                    gapDisplay.style.color = "var(--success)";
-                }
-
-                // Ring Visuals
-                let effectiveVal = investmentValue - appState.stressTestPenalty;
-                let pct = effectiveVal / wealthTarget;
-                if (pct < 0) pct = 0; if (pct > 1) pct = 1;
-                let offset = 339 - (339 * pct);
-
-                if (ring) {
-                    ring.style.stroke = "var(--warning)";
-                    if (appState.scenarioType === 'wait') ring.style.stroke = "var(--success)";
-                    ring.style.strokeDashoffset = offset;
-                }
-            }
-            // ----------------------------------------------------------------
-            // SCENARIO 2: BUY NOW -> GOAL: MORTGAGE FREEDOM
-            // ----------------------------------------------------------------
-            else {
-                titleDisplay.innerText = "Mortgage Freedom";
-
-                let mortgageBalance = 593000; // High Ratio Start
-                let basePrincipal = 950;
-
-                // STRESS TEST: Rate Hike (+2%) drastically eats into principal payment
-                // On a $600k loan, 2% is ~$1000/mo interest. 
-                // We simulate this by reducing the effective principal payment.
-                let interestPenalty = appState.isStressTest ? 300 : 0;
-
-                let totalMonthlyPrincipal = (basePrincipal - interestPenalty) + appState.savingsAmount;
-                if (totalMonthlyPrincipal <= 100) totalMonthlyPrincipal = 100; // Minimum floor
-
-                let monthsToFreedom = Math.ceil(mortgageBalance / totalMonthlyPrincipal);
-                let years = (monthsToFreedom / 12).toFixed(1);
-
-                monthsDisplay.innerText = years;
-                subtextDisplay.innerText = "Years";
-                monthsDisplay.style.fontSize = "48px";
-
-                gapDisplay.innerHTML = "Balance: $" + (mortgageBalance / 1000).toFixed(0) + "k <span style='font-size:10px; color:#666;'>(High Ratio)</span>";
-                gapDisplay.style.color = "var(--cibc-red)";
-
-                // Ring Visuals (vs Standard 30 Year)
-                let standardMonths = 360;
-                let progress = 1 - (monthsToFreedom / standardMonths);
-                if (progress < 0) progress = 0; if (progress > 1) progress = 1;
-
-                let offset = 339 - (339 * progress);
-                if (ring) {
-                    ring.style.stroke = "var(--success)";
-                    if (appState.isStressTest) ring.style.stroke = "var(--danger)"; // Red warning if stressed
-                    ring.style.strokeDashoffset = offset;
-                }
-            }
+            // Screen 3 is skipped in simplified flow.
+            // If accessed, we ensure no errors for legacy DOM elements.
         }
 
-        // SIMULATOR & SAVINGS LOGIC
-        function updateSimulator(extraSavings) {
-            appState.savingsAmount = parseInt(extraSavings);
+        // SIMULATOR & SAVINGS LOGIC (Stubs)
+        function updateSimulator(year) {
+            year = parseInt(year);
+            document.getElementById('simulator-year').innerText = 'Year ' + year;
 
-            // Visual Slider Update (if function called programmatically)
-            const slider = document.querySelector('.slider');
-            if (slider && slider.value != extraSavings) slider.value = extraSavings;
+            // Simple projections
+            // Rent: $1,500/mo savings invested at 6% annual return
+            const monthlySavings = 1500;
+            const annualReturn = 0.06;
+            const months = year * 12;
 
-            // Reset Buttons Visuals (Manual override implies desync)
-            // Note: We don't remove active state here to allow "stacking" logic, 
-            // but for simplicity in this demo, moving slider usually resets "toggle" states 
-            // OR we can make slider just add on top.
-            // Decision: Moving slider resets the "Recommended Actions" visual state to encourage re-clicking.
-            document.querySelectorAll('.product-card button').forEach(btn => {
-                btn.classList.remove('active-state');
-                btn.style.backgroundColor = "transparent";
-                btn.style.color = "var(--cibc-red)";
-                btn.style.border = "1px solid var(--cibc-red)";
-                // Reset Text based on Scenario context would be complex, generic 'Activate/Review/Apply' is hardcoded in HTML.
-                // We leave text as is, just reset style.
-                if (btn.innerText.includes("Sync") || btn.innerText.includes("✓")) {
-                    // Try to reset to initial text? 
-                    // Simple fallback:
-                    btn.innerText = "Activate";
-                }
-            });
+            // Future value of monthly investment
+            const monthlyRate = annualReturn / 12;
+            const rentValue = monthlySavings * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
 
-            renderState();
-        }
+            // Buy: Home appreciation 3%/year on $500k - mortgage paydown
+            const homePrice = 500000;
+            const homeValue = homePrice * Math.pow(1.03, year);
+            const mortgageBalance = 450000 * Math.pow(0.98, year); // Simplified paydown
+            const buyValue = (homeValue - mortgageBalance);
 
-        function toggleCheck(btn) {
-            const isActive = btn.classList.contains('active-state');
-            const willBeActive = !isActive;
+            // Update UI
+            document.getElementById('rent-value').innerText = '$' + (rentValue / 1000).toFixed(1) + 'k';
+            document.getElementById('buy-value').innerText = '$' + (buyValue / 1000).toFixed(1) + 'k';
 
-            if (!willBeActive) {
-                // Turn Off
-                btn.classList.remove('active-state');
-                btn.style.backgroundColor = "transparent";
-                btn.style.color = "var(--cibc-red)";
-                btn.style.border = "1px solid var(--cibc-red)";
-                btn.innerText = "Activate";
+            // Update bar widths (proportional to max value)
+            const maxValue = Math.max(rentValue, buyValue);
+            const rentPercent = (rentValue / maxValue) * 100;
+            const buyPercent = (buyValue / maxValue) * 100;
+
+            document.getElementById('rent-bar').style.width = rentPercent + '%';
+            document.getElementById('buy-bar').style.width = buyPercent + '%';
+
+            // Update winner badge
+            const winnerBadge = document.getElementById('winner-badge');
+            const diff = Math.abs(rentValue - buyValue);
+
+            if (rentValue > buyValue) {
+                winnerBadge.style.background = 'var(--success)';
+                winnerBadge.innerHTML = `
+                    <div style="font-size:13px; font-weight:bold;">🏆 Rent & Invest Ahead by $${(diff / 1000).toFixed(1)}k</div>
+                    <div style="font-size:10px; margin-top:5px; opacity:0.9;">At Year ${year}, renting provides higher net worth</div>
+                `;
             } else {
-                // Turn On with Delay
-                btn.innerText = "Syncing...";
-                btn.style.opacity = "0.7";
-
-                setTimeout(() => {
-                    btn.classList.add('active-state');
-                    btn.innerText = "✓ Sync";
-                    btn.style.backgroundColor = "var(--success)";
-                    btn.style.color = "white";
-                    btn.style.border = "none";
-                    btn.style.opacity = "1";
-                    calculateTotalSavings(); // Trigger Math
-                }, 400);
-                return;
+                winnerBadge.style.background = 'var(--cibc-red)';
+                winnerBadge.innerHTML = `
+                    <div style="font-size:13px; font-weight:bold;">🏆 Buy Home Ahead by $${(diff / 1000).toFixed(1)}k</div>
+                    <div style="font-size:10px; margin-top:5px; opacity:0.9;">At Year ${year}, homeownership builds more wealth</div>
+                `;
             }
-            calculateTotalSavings();
         }
-
-        function calculateTotalSavings() {
-            // Robust Selection using Optional Chaining logic
-            const fhsaBtn = document.querySelector('.fhsa button');
-            const hbpBtn = document.querySelector('.hbp button');
-
-            const fhsaActive = fhsaBtn ? fhsaBtn.classList.contains('active-state') : false;
-            const hbpActive = hbpBtn ? hbpBtn.classList.contains('active-state') : false;
-
-            const slider = document.querySelector('.slider');
-
-            // Default Base (House Poor vs Rent vs Wait base is set in updateSimulator, 
-            // but here we are ADDING to the slider)
-            // Actually, we should update the SLIDER value to reflect the sum.
-
-            let base = 200; // Baseline
-            if (appState.scenarioType === 'wait') base = 1500;
-            if (appState.scenarioType === 'rent') base = 400;
-            if (appState.scenarioType === 'buy') base = 200;
-
-            let total = base;
-
-            // Add Boosts
-            if (fhsaActive) total += 600; // ~$8k/yr / 12
-            if (hbpActive) total += 500;
-
-            // Update State & UI
-            appState.savingsAmount = total;
-            slider.value = total;
-            renderState();
-        }
+        function toggleCheck(btn) { }
+        function calculateTotalSavings() { }
 
         // TRANSITIONS
-        function startTracking() {
-            const btn = document.querySelector('#screen-3 .cta-btn');
-            const originalText = btn.innerText;
-            btn.innerText = "Saving Preferences...";
-            updateFinalScreen();
-            setTimeout(() => {
-                goToScreen(4);
-                btn.innerText = originalText;
-            }, 1000);
+        function handleBuildPlan() {
+            if (appState.scenarioType === 'buy') {
+                // User Request: Buy Now -> Readiness Engine (Screen 3)
+                goToScreen(3);
+                // Note: Screen 3 will show "Buy Now Reality" content via updateFinalScreen() logic called by goToScreen's internal or subsequent triggers if any, 
+                // but actually updateFinalScreen is usually called by startTracking/selectScenario. 
+                // We just need to ensure Screen 3 is shown.
+            } else if (appState.scenarioType === 'rent') {
+                // User Request: Rent -> Rent vs Smart Wait Simulator
+                // Screen 7 is statically set to Year 5, so we just navigate there
+                goToScreen(7);
+            } else {
+                // Smart Wait -> Readiness Engine (Standard Path)
+                goToScreen(3);
+            }
         }
 
+        function startTracking() {
+            updateFinalScreen();
+            goToScreen(4); // Direct Route
+        }
+
+        // RENDER SCREEN 4 (User Requirement 3 & 4)
         function updateFinalScreen() {
             const screen4Title = document.getElementById('final-title');
             const screen4Badge = document.getElementById('final-badge');
@@ -1388,122 +1894,180 @@
             const screen4Label = screen4DownPmt.parentElement.firstElementChild;
             const dateSubtext = document.querySelector('#readiness-date-container div');
 
-            // --- RENT / WAIT LOGIC ---
-            if (appState.scenarioType === 'rent' || appState.scenarioType === 'wait') {
-                if (dateSubtext) dateSubtext.innerText = "(Net of rent/living expenses)";
-                screen4Label.innerText = "Projected Down Payment";
-                if (appState.scenarioType === 'wait') screen4Label.innerText = "Projected Smart Down Payment";
+            // 1. RENT
+            if (appState.scenarioType === 'rent') {
+                if (dateSubtext) dateSubtext.innerText = "(Liquid Wealth at Year 5)";
+                screen4Label.innerText = "Projected Net Worth";
 
-                let goal = 120000;
-                let initialSavings = 35000; // SYNC FIX: Added to match Screen 3
-                let investmentValue = initialSavings + (appState.savingsAmount * 36);
+                let result = MathEngine.getRentProfile();
 
-                // Apply Stress Penalty to Screen 4 too
-                let netGap = goal - investmentValue + appState.stressTestPenalty;
+                screen4Title.innerText = "Rent & Invest";
+                screen4Badge.innerText = "5 Year View";
+                screen4Badge.className = "badge ready";
+                screen4Badge.style.background = "#E8F5E9"; screen4Badge.style.color = "#2E7D32";
 
-                // Score Calculation
-                let score = Math.floor((investmentValue / goal) * 98);
-                // Adjust score for stress
-                if (appState.isStressTest) score -= 15;
-                if (score > 98) score = 98;
-                if (score < 5) score = 5;
+                screen4DownPmt.innerText = "$" + (result.netWorth / 1000).toFixed(1) + "k";
+                screen4DownPmt.style.color = "var(--success)";
+                fitTextInCircle('final-downpmt', 30);
 
-                // Date Calc
-                let monthsRemaining = 0;
-                if (netGap > 0 && appState.savingsAmount > 0) {
-                    monthsRemaining = Math.ceil(netGap / appState.savingsAmount);
-                } else if (netGap <= 0) {
-                    monthsRemaining = 0;
+                screen4Date.innerHTML = "Annualized Return: <strong>6.0%</strong>";
+                screen4Date.innerHTML += "<br><span style='font-size:12px; color:#666;'>Control Scenario (No Home)</span>";
+
+                // Update label to "Projected Net Worth" for Rent
+                const confLabel = document.getElementById('conf-score-label');
+                if (confLabel) confLabel.innerText = "Projected Net Worth";
+
+                // Hide redundant down payment card (net worth already shown in circle)
+                const downPaymentCard = document.getElementById('down-payment-card');
+                if (downPaymentCard) downPaymentCard.style.display = 'none';
+
+                // Update button to "Rent vs Buy Simulator"
+                const primaryBtn = document.getElementById('screen4-primary-btn');
+                if (primaryBtn) primaryBtn.innerText = "Rent vs Buy Simulator";
+
+                // Show Net Worth instead of N/A
+                screen4Conf.innerText = "$" + (result.netWorth / 1000).toFixed(1) + "k";
+                screen4Conf.style.color = "var(--success)";
+                screen4Conf.style.fontSize = "18px";
+            }
+
+            // 2. BUY NOW (Or Fallback)
+            else if (appState.scenarioType === 'buy' || (appState.scenarioType === 'wait' && appState.planMode === 'buyNowFallback')) {
+                // Reset button text to default for Buy Now
+                const primaryBtn = document.getElementById('screen4-primary-btn');
+                if (primaryBtn) primaryBtn.innerText = "Run Mortgage Pre-Check (AI)";
+
+                // Show down payment card for Buy Now
+                const downPaymentCard = document.getElementById('down-payment-card');
+                if (downPaymentCard) downPaymentCard.style.display = 'block';
+
+                // Reset confidence label
+                const confLabel = document.getElementById('conf-score-label');
+                if (confLabel) confLabel.innerText = "Confidence Score";
+
+                if (dateSubtext) dateSubtext.innerText = "(Immediate Purchase)";
+                screen4Label.innerText = "Monthly Payment";
+
+                let result = MathEngine.getBuyNowProfile();
+
+                // If Fallback, show specific title
+                if (appState.scenarioType === 'wait') {
+                    screen4Title.innerText = "Unoptimized Plan";
+                    screen4Badge.innerText = "Standard Path";
+                    // Badge orange/grey?
+                    screen4Badge.style.background = "#fff3e0"; screen4Badge.style.color = "#e65100";
                 } else {
-                    monthsRemaining = 999;
+                    screen4Title.innerText = "Buy Now Reality";
+                    screen4Badge.innerText = "High Risk";
+                    screen4Badge.style.background = "var(--danger)"; screen4Badge.style.color = "white";
                 }
 
-                screen4Conf.innerText = score + "%";
+                let insuranceText = (result.isHighRatio) ? "High Ratio (Insured)" : "";
 
-                // Colors & Status
-                if (score < 50) screen4Conf.style.color = "var(--danger)";
-                else if (score < 80) screen4Conf.style.color = "var(--warning)";
-                else screen4Conf.style.color = "var(--success)";
+                screen4DownPmt.innerHTML = `$${result.monthlyPayment.toFixed(0)}<span style='font-size:12px;'>/mo</span>`;
+                screen4DownPmt.style.color = "var(--cibc-red)";
+                fitTextInCircle('final-downpmt', 30);
 
-                if (netGap <= 0) {
-                    screen4Title.innerText = "Ready to Buy";
-                    screen4Badge.innerText = "Goal Achieved";
-                    screen4Badge.className = "badge ready";
-                    screen4DownPmt.innerText = "Target Met ($120k+)";
-                    screen4DownPmt.style.color = "var(--success)";
-                    screen4Date.innerText = "Ready Now";
-                    screen4Date.style.color = "var(--success)";
-                } else {
-                    screen4Title.innerText = "Building Deposit";
-                    screen4Badge.innerText = "In Progress";
-                    screen4Badge.className = "badge exploring";
-                    screen4DownPmt.innerText = "Gap: -$" + netGap.toLocaleString();
-                    screen4DownPmt.style.color = "var(--warning)";
+                screen4Date.innerHTML = `
+                    Principal: <strong>$${(result.principal / 1000).toFixed(0)}k</strong><br>
+                    <span style='font-size:12px; color:var(--danger);'>${insuranceText}</span><br>
+                    <span style='font-size:11px; color:#666;'>CMHC Cost: $${(result.insuranceCost / 1000).toFixed(1)}k</span>
+                `;
 
-                    let today = new Date();
-                    today.setMonth(today.getMonth() + monthsRemaining);
-                    const dateString = today.toLocaleString('default', { month: 'long', year: 'numeric' });
-                    screen4Date.innerText = dateString + " (" + (monthsRemaining / 12).toFixed(1) + " Years)";
-                    screen4Date.style.color = "var(--cibc-dark)";
+                // If fallback, add note
+                if (appState.scenarioType === 'wait') {
+                    screen4Date.innerHTML += `<br><span style='font-size:11px; color:var(--cibc-red); font-style:italic;'>Without FHSA/HBP, this is your reality.</span>`;
+                }
+
+                screen4Conf.innerText = "LOW";
+                screen4Conf.style.color = "var(--danger)";
+
+                // HIDE Smart Wait specific modules for Buy Now
+                const recList = document.getElementById('rec-list');
+                const timelineCard = document.getElementById('timeline-card');
+                const gapContainer = document.getElementById('gap-val')?.parentElement?.parentElement;
+
+                if (recList) recList.style.display = 'none';
+                if (timelineCard) timelineCard.style.display = 'none';
+                if (gapContainer) gapContainer.style.display = 'none';
+
+                // AGGRESSIVE LABEL HIDING for Buy Now
+                // Hide specific labels by ID for robustness
+                const lblSavings = document.getElementById('lbl-savings');
+                const lblRec = document.getElementById('lbl-recommended');
+
+                if (lblSavings) lblSavings.style.display = 'none';
+                if (lblRec) lblRec.style.display = 'none';
+
+                // Update Insight Header - Ensure we target the right element
+                if (dateSubtext) {
+                    dateSubtext.innerHTML = "<strong style='color:var(--cibc-red);'>Realty Check:</strong> Buying now maximizes costs.";
+                    dateSubtext.style.display = 'block';
                 }
             }
-            // --- BUY LOGIC ---
+
+            // 3. SMART WAIT (Optimized)
             else {
-                if (dateSubtext) dateSubtext.innerText = "";
-                screen4Label.innerText = "Projected Mortgage Free";
-                let mortgageBalance = 593000;
-                let basePrincipal = 950;
-                // Apply Stress Penalty
-                let interestPenalty = appState.isStressTest ? 300 : 0;
-                let totalMonthly = (basePrincipal - interestPenalty) + appState.savingsAmount;
-                if (totalMonthly <= 100) totalMonthly = 100;
+                // Reset button text to default for Smart Wait
+                const primaryBtn = document.getElementById('screen4-primary-btn');
+                if (primaryBtn) primaryBtn.innerText = "Run Mortgage Pre-Check (AI)";
 
-                let monthsToFreedom = Math.ceil(mortgageBalance / totalMonthly);
-                let years = (monthsToFreedom / 12).toFixed(1);
+                // Show down payment card for Smart Wait
+                const downPaymentCard = document.getElementById('down-payment-card');
+                if (downPaymentCard) downPaymentCard.style.display = 'block';
 
-                // Freedom Score Logic
-                let score = Math.floor(100 - (years * 2));
-                if (appState.isStressTest) score -= 10; // Explicit penalty
-                if (score > 99) score = 99;
-                if (score < 20) score = 20;
+                // Reset confidence label
+                const confLabel = document.getElementById('conf-score-label');
+                if (confLabel) confLabel.innerText = "Confidence Score";
 
-                screen4Conf.innerText = score + "%";
+                // SHOW Smart Wait specific modules
+                const recList = document.getElementById('rec-list');
+                const timelineCard = document.getElementById('timeline-card');
+                const gapContainer = document.getElementById('gap-val')?.parentElement?.parentElement;
 
-                if (years < 18) {
-                    screen4Title.innerText = "Freedom Fast-Track";
-                    screen4Badge.innerText = "Accelerated";
-                    screen4Badge.className = "badge ready";
-                    screen4Conf.style.color = "var(--success)";
-                } else if (years < 28) {
-                    screen4Title.innerText = "On Track";
-                    screen4Badge.innerText = "Standard Path";
-                    screen4Badge.className = "badge exploring";
-                    screen4Conf.style.color = "#FFC107"; // Yellow
-                } else {
-                    screen4Title.innerText = "Extended Amortization";
-                    screen4Badge.innerText = "High Interest Risk";
-                    screen4Badge.className = "badge exploring";
-                    screen4Conf.style.color = "var(--danger)";
-                }
+                if (recList) recList.style.display = 'block';
+                // Timeline logic handles content, ensure visibility
+                if (timelineCard) timelineCard.style.display = 'block';
+                if (gapContainer) gapContainer.style.display = 'flex';
 
-                screen4DownPmt.innerText = years + " Years Total";
-                screen4DownPmt.style.color = "var(--cibc-dark)";
+                // Restore Labels via ID
+                const lblSavings = document.getElementById('lbl-savings');
+                const lblRec = document.getElementById('lbl-recommended');
 
-                let today = new Date();
-                today.setMonth(today.getMonth() + monthsToFreedom);
-                const dateString = today.toLocaleString('default', { month: 'long', year: 'numeric' });
-                screen4Date.innerText = dateString;
-                screen4Date.style.color = "var(--cibc-dark)";
+                if (lblSavings) lblSavings.style.display = 'block';
+                if (lblRec) lblRec.style.display = 'block';
 
-                const checkIcon = document.getElementById('check-downpmt-icon');
-                const checkText = document.getElementById('check-downpmt-text');
-                if (checkIcon) {
-                    checkIcon.innerHTML = "&#10003;";
-                    checkIcon.style.background = "#E8F5E9";
-                    checkIcon.color = "#2e7d32";
-                    checkText.innerText = "Mortgage Active (Amortization: " + years + "y)";
-                    checkText.style.color = "#2e7d32";
-                }
+                if (dateSubtext) dateSubtext.innerText = "(Net of rent/living expenses)";
+                screen4Label.innerText = "Projected Down Payment";
+
+                let result = MathEngine.getSmartWaitProfile();
+
+                // Compute Readiness Date Name
+                let readyDate = new Date();
+                readyDate.setMonth(readyDate.getMonth() + result.readyMonths);
+                let dateString = readyDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+                screen4Title.innerText = "Smart Wait Plan";
+                screen4Badge.innerText = "OPTIMIZED";
+                screen4Badge.className = "badge ready";
+                screen4Badge.style.background = "#E8F5E9"; screen4Badge.style.color = "#2E7D32";
+
+                screen4DownPmt.innerText = "$" + (result.availableDP / 1000).toFixed(1) + "k";
+                screen4DownPmt.style.color = "var(--success)";
+                fitTextInCircle('final-downpmt', 30);
+
+                screen4Date.innerHTML = `Ready in: <strong>${result.readyMonths} Months</strong> (${dateString})`;
+
+                // Hero Metric
+                screen4Date.innerHTML += `<br><div style='margin-top:15px; background:#e6f4ea; padding:10px; border-radius:6px; border-left:4px solid var(--success);'>
+                    <div style='font-size:11px; font-weight:bold; color:var(--success); text-transform:uppercase;'>Smart Advantage</div>
+                    <div style='font-size:13px; color:var(--cibc-dark); margin-top:4px;'>
+                        By waiting, you own your home <strong>${result.comparison.yearsSaved.toFixed(1)} Years Earlier</strong> than buying today.
+                    </div>
+                </div>`;
+
+                screen4Conf.innerText = "HIGH";
+                screen4Conf.style.color = "var(--success)";
             }
         }
 
@@ -1518,85 +2082,35 @@
             document.getElementById('info-modal').style.display = 'none';
         }
 
-        // RENEWAL SCREEN (Blend & Extend)
-        function calculateRenewal(btn) {
-            const isActive = btn.classList.contains('active-state');
-            if (isActive) {
-                // Revert
-                btn.classList.remove('active-state');
-                btn.innerText = "Calculate";
-                btn.classList.add('cta-secondary');
-                btn.classList.remove('cta-btn');
-                btn.style.background = "transparent";
-                btn.style.color = "var(--cibc-red)";
-
-                const shockVal = document.getElementById('shock-val');
-                const shockBar = document.getElementById('shock-bar');
-                const shockText = document.getElementById('shock-text');
-                shockVal.innerText = "+$450/mo";
-                shockVal.style.color = "var(--danger)";
-                shockBar.style.width = "75%";
-                shockBar.style.background = "var(--warning)";
-                shockText.innerText = "You are at 75% of your absorbable limit";
-            } else {
-                // Apply
-                btn.innerText = "Calculating...";
-                btn.style.opacity = 0.7;
-                setTimeout(() => {
-                    btn.classList.add('active-state');
-                    btn.innerText = "Switch Plan";
-                    btn.classList.remove('cta-secondary');
-                    btn.classList.add('cta-btn');
-                    btn.style.background = "var(--cibc-red)";
-                    btn.style.color = "white";
-                    btn.style.opacity = 1;
-
-                    const shockVal = document.getElementById('shock-val');
-                    const shockBar = document.getElementById('shock-bar');
-                    const shockText = document.getElementById('shock-text');
-                    shockVal.innerText = "+$120/mo";
-                    shockVal.style.color = "var(--success)";
-                    shockBar.style.width = "25%";
-                    shockBar.style.background = "var(--success)";
-                    shockText.innerText = "Safe! You are well within your limit.";
-                }, 800);
-            }
+        // UNIFIED RENEWAL CALCULATOR - DEMO LOGIC
+        function updateRenewalUI() {
+            // Empty - preserved for future use
         }
 
-        function applyAction(btn) {
-            const isActive = btn.classList.contains('active-state');
+        function calculateRenewal(btn) {
+            // Make buttons show demo results
             const shockVal = document.getElementById('shock-val');
             const shockBar = document.getElementById('shock-bar');
             const shockText = document.getElementById('shock-text');
 
-            if (isActive) {
-                btn.classList.remove('active-state');
-                btn.innerText = "Apply";
-                btn.style.background = "transparent";
-                btn.style.color = "var(--cibc-red)";
-                // Revert UI logic simplified
-                shockVal.innerText = "+$450/mo";
-                shockVal.style.color = "var(--danger)";
-                shockBar.style.width = "75%";
-                shockBar.style.background = "var(--warning)";
-            } else {
-                btn.innerText = "Processing...";
-                setTimeout(() => {
-                    btn.classList.add('active-state');
-                    btn.innerText = "Applied ✓";
-                    btn.style.background = "#2e7d32";
-                    btn.style.color = "white";
-                    btn.style.borderColor = "#2e7d32";
-
-                    shockVal.innerText = "+$350/mo";
-                    shockVal.style.color = "var(--warning)";
-                    shockBar.style.width = "55%";
-                    shockBar.style.background = "var(--warning)";
-                    shockText.innerText = "Improved. Capacity cushion increased.";
-                }, 600);
-            }
+            if (shockVal) shockVal.innerText = "+$120/mo";
+            if (shockBar) shockBar.style.width = "40%";
+            if (shockText) shockText.innerText = "Blend & Extend reduces your payment shock significantly.";
         }
+
+        function applyAction(btn) {
+            alert("Payment increase applied. Mortgage amortization reduced by approximately 2 years.");
+        }
+
+        // INITIALIZATION
+        window.addEventListener('load', function () {
+            selectScenario('wait');
+        });
     </script>
+
+    </div>
+    <!-- /phone-mockup -->
+
 </body>
 
 </html>
